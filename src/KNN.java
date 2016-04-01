@@ -13,7 +13,7 @@ import org.omg.PortableServer.ServantActivator;
  */
 public class KNN {
     List<Element> trainData = new ArrayList<Element>();
-
+    private double[] weights;
     /**
      * constructor
      * Initialize a KNN instance
@@ -35,11 +35,10 @@ public class KNN {
      * @param isWeighted false: use even weight, otherwise, using 10 fold CV to calculate the best weight
      * @return return model
      */
-    public Model train(String path, boolean isWeighted) {
-        return new Model();
+    public void train(String path, boolean isWeighted) {
     }
 
-    public Result predict(String path, Model model) {
+    public Result predict(String path) {
         return new Result();
     }
 
