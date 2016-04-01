@@ -6,9 +6,6 @@ import java.util.List;
  * @since Apr 1, 2016
  */
 public class Result {
-    private double[] weights;
     private List<Element> testSet;
     private double accuracy;
-    
-
 }
