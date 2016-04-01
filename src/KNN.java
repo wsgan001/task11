@@ -15,25 +15,39 @@ public class KNN {
     List<Element> trainData = new ArrayList<Element>();
 
     /**
+     * constructor
+     * Initialize a KNN instance
+     * KNN k = new KNN();
+     * set training set
+     * k.setTrain("URL");
+     * predict the test set
+     * k.predict("URL");
+     * return a predict result instance, with all predictions and a accuracy
+     * 
      * 
      */
     public KNN() {
     }
-
-    public void train(String path) {
-        loadData(path);
-
+    
+    /**
+     * train the KNN model using given training set
+     * @param path training set file
+     * @param isWeighted false: use even weight, otherwise, using 10 fold CV to calculate the best weight
+     * @return return model
+     */
+    public Model train(String path, boolean isWeighted) {
+        return new Model();
     }
 
-    public void predict(String path) {
-
+    public Result predict(String path, Model model) {
+        return new Result();
     }
 
-    public void crossValidation(int fold) {
+    private void crossValidation(int fold) {
 
     }
     
-    public double calculateSim(){
+    private double calculateSim(){
         return 2;
     }
 
