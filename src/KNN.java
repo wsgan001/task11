@@ -16,7 +16,7 @@ import org.omg.PortableServer.ServantActivator;
  * @since Mar 28, 2016
  */
 public class KNN {
-    List<ProdSelection> trainData = new ArrayList<ProdSelection>();
+    private List<ProdSelection> trainData;
     private double[] weights;
     /**
      * constructor
@@ -38,9 +38,17 @@ public class KNN {
      * @param path training set file
      * @param isWeighted false: use even weight, otherwise, using 10 fold CV to calculate the best weight
      * @return return model
+     * @throws IOException 
      */
-    public void train(String path, boolean isWeighted) {
+    public void train(String path, double[] weights) throws IOException {
         loadTrainData(path);
+    }
+    public void train(double[] weights) throws IOException {
+        train("trainProdSelection.arff", weights);
+    }
+    public void train() throws IOException {
+        double[] defaultWeight = {1,1,1,1,1,1};
+        train("trainProdSelection.arff", defaultWeight);
     }
 
     public Result predict(String path) {
@@ -54,13 +62,13 @@ public class KNN {
     private double calculateSim(){
         return 2;
     }
-
-    private List<ProdSelection> loadTrainData(String path) throws IOException {
+    private void loadTrainData(String path) throws IOException {
+        trainData = new ArrayList<ProdSelection>();
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
         while((line = br.readLine()) != null) {
             trainData.add(new ProdSelection(line));
         }
-        return trainData;
+        
     }
 }

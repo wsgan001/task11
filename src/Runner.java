@@ -10,7 +10,8 @@ public class Runner {
      * @param args
      */
     public static void main(String[] args) {
-
+        KNN model = new KNN();
+        model.train(path, isWeighted);
     }
 
 }
