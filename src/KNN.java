@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +16,7 @@ import org.omg.PortableServer.ServantActivator;
  * @since Mar 28, 2016
  */
 public class KNN {
-    List<Element> trainData = new ArrayList<Element>();
+    List<ProdSelection> trainData = new ArrayList<ProdSelection>();
     private double[] weights;
     /**
      * constructor
@@ -36,6 +40,7 @@ public class KNN {
      * @return return model
      */
     public void train(String path, boolean isWeighted) {
+        loadTrainData(path);
     }
 
     public Result predict(String path) {
@@ -50,7 +55,12 @@ public class KNN {
         return 2;
     }
 
-    private List<Element> loadData(String path) {
+    private List<ProdSelection> loadTrainData(String path) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(path));
+        String line;
+        while((line = br.readLine()) != null) {
+            trainData.add(new ProdSelection(line));
+        }
         return trainData;
     }
 }

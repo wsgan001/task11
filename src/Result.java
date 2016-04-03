@@ -6,6 +6,6 @@ import java.util.List;
  * @since Apr 1, 2016
  */
 public class Result {
-    private List<Element> testSet;
+    private List<ProdSelection> testSet;
     private double accuracy;
 }

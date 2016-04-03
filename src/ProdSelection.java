@@ -4,7 +4,7 @@
  * @version 1.0
  * @since Mar 28, 2016
  */
-public class Element {
+public class ProdSelection {
         private Type type;
         private Style style;
         private int Vacation;
@@ -13,7 +13,7 @@ public class Element {
         private int property;
         private Label label;
 
-        public Element(String str) {
+        public ProdSelection(String str) {
             String[] params = str.split(",");
             setType(params[0]);
             setStyle(params[1]);
