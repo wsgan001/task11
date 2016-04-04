@@ -80,6 +80,10 @@ public class knn_test {
         int maxCredit = 0;
         double maxSalary = 0;
         double maxProperty = 0;
+        int minVacation = 0;
+        int minCredit = 0;
+        double minSalary = 0;
+        double minProperty = 0;
         for (int i = 0; i< allData.size(); i++) {
             if (allData.get(i).getElement().getVacation() > maxVacation) {
                 maxVacation = allData.get(i).getElement().getVacation();
@@ -93,12 +97,24 @@ public class knn_test {
             if (allData.get(i).getElement().getProperty() > maxProperty) {
                 maxProperty = allData.get(i).getElement().getProperty();
             }
+            if (allData.get(i).getElement().getVacation() < minVacation) {
+                minVacation = allData.get(i).getElement().getVacation();
+            }
+            if (allData.get(i).getElement().getCredit() < minCredit) {
+                minCredit = allData.get(i).getElement().getCredit();
+            }
+            if (allData.get(i).getElement().getSalary() < minSalary) {
+                minSalary = allData.get(i).getElement().getSalary();
+            }
+            if (allData.get(i).getElement().getProperty() < minProperty) {
+                minProperty = allData.get(i).getElement().getProperty();
+            }
         }
         for (int i = 0; i< allData.size(); i++) {
-            allData.get(i).getElement().setNormVacation((double)(allData.get(i).getElement().getVacation()/(double) maxVacation));
-            allData.get(i).getElement().setNormCredit((double)(allData.get(i).getElement().getCredit()/(double) maxCredit));
-            allData.get(i).getElement().setNormSalary((double)(allData.get(i).getElement().getSalary()/maxSalary));
-            allData.get(i).getElement().setNormProperty((double)(allData.get(i).getElement().getProperty()/maxProperty));
+            allData.get(i).getElement().setNormVacation((double)(allData.get(i).getElement().getVacation() - minVacation)/(double) (maxVacation - minVacation));
+            allData.get(i).getElement().setNormCredit((double)(allData.get(i).getElement().getCredit() - minCredit)/(double) (maxCredit - minCredit));
+            allData.get(i).getElement().setNormSalary((double)(allData.get(i).getElement().getSalary() - minSalary)/(double) (maxSalary - minSalary));            
+            allData.get(i).getElement().setNormProperty((double)(allData.get(i).getElement().getProperty() - minProperty)/(double) (maxProperty - minProperty));            
         }   
         int count = 0;
         // Compute for the Distance of all the Test Data
