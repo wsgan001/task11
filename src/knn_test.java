@@ -27,7 +27,6 @@ public class knn_test {
                //   System.out.println(line);
                 newList.add(line);
             }
-            
         }
         br_train.close();
         /*
