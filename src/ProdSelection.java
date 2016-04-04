@@ -36,6 +36,15 @@ public class ProdSelection {
 
     public ProdSelection() {
     }
+    public ProdSelection(ProdSelection from) {
+        this.type = from.type;
+        this.style = from.style;
+        this.vacation = from.vacation;
+        this.credit = from.credit;
+        this.salary = from.salary;
+        this.property = from.property;
+        this.label = from.label;
+    }
 
     /**
      * Pass a list of training prodselection to reset the minmax.
@@ -43,10 +52,10 @@ public class ProdSelection {
      * @param list
      */
     public static void resetMinMax(List<ProdSelection> list) {
-        vMin = cMin = Integer.MIN_VALUE;
-        sMin = pMin = Double.MIN_VALUE;
-        vMax = cMax = Integer.MAX_VALUE;
-        sMax = pMax = Double.MAX_VALUE;
+        vMin = cMin = Integer.MAX_VALUE;
+        sMin = pMin = Double.MAX_VALUE;
+        vMax = cMax = Integer.MIN_VALUE;
+        sMax = pMax = Double.MIN_VALUE;
         for (ProdSelection p : list) {
             vMax = Math.max(vMax, p.getVacation());
             cMax = Math.max(cMax, p.getCredit());

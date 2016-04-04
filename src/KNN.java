@@ -1,9 +1,13 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.DoubleBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
+
+import javax.xml.stream.events.StartDocument;
 
 /**
  * @author Yuheng Li
@@ -16,9 +20,12 @@ public class KNN {
     private static final String TESTPATH = "testProdSelection.arff";
     private static int k = 3;
     private static final double[] DEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1 };
-    private List<ProdSelection> trainData;
-    private List<ProdSelection> testData;
+    private List<ProdSelection> trainData = new ArrayList<ProdSelection>();
+    private List<ProdSelection> testData = new ArrayList<ProdSelection>();
 
+    ///////////////////////////////////////////////////////
+    ////////////////// CONSTRUCTORS/////////////////////////
+    ///////////////////////////////////////////////////////
     /**
      * Default Constructor, K = 3
      */
@@ -33,6 +40,19 @@ public class KNN {
      */
     public KNN(int k) {
         this.k = k;
+    }
+
+    ///////////////////////////////////////////////////////
+    ////////////////// Public Functions////////////////////
+    ///////////////////////////////////////////////////////
+
+    /**
+     * Predict using default testing set path
+     * 
+     * @return
+     */
+    public Result predict() {
+        return predict(TESTPATH);
     }
 
     /**
@@ -83,9 +103,81 @@ public class KNN {
         result.resultSet = resultSet;
         return result;
     }
+
+    /**
+     * Validate the predict accuracy using result object
+     * 
+     * @param result
+     */
+    public double validate(Result result) {
+        double hit = 0;
+        for (int i = 0; i < result.testSet.size(); i++) {
+            if (result.testSet.get(i).getLabel() == result.resultSet.get(i)) {
+                hit++;
+            }
+        }
+        result.accuracy = hit / result.resultSet.size();
+        return result.accuracy;
+    }
+
+    public double crossValidation(int fold) {
+        return crossValidation(fold, DEFAULTWEIGHT);
+    }
+
+    /**
+     * Take a weight vecotr and conduct 10 fold validation, return an average
+     * accuracy.
+     * 
+     * @param w
+     *            weight vector, size = 6
+     * @return average accuracy
+     */
+    public double crossValidation(double[] w) {
+        return crossValidation(10, w);
+    }
     
     /**
+     * Conduct x fold cross validation with weight w
+     * @param fold
+     * @param w
+     * @return
+     */
+    public double crossValidation(int fold, double[] w) {
+        try {
+            loadData(TRAINPATH, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int size = trainData.size();
+        List<ProdSelection> shuffled = cloneList(trainData);
+        Collections.shuffle(shuffled);
+        int testSize = size / fold;
+        int mod = size % fold;
+        int cnt = 0;
+        int num = 1;
+        int start = 0;
+        double err = 0;
+        while (start < size) {
+            int end = start + testSize + (cnt++ < mod ? 1 : 0);
+            List<ProdSelection> test = cloneList(
+                    shuffled.subList(start, Math.min(end, size)));
+            List<ProdSelection> train = cloneList(shuffled.subList(0, start));
+            train.addAll(cloneList(shuffled.subList(end, size)));
+            double currErr = validate(predict(train, test, w));
+            System.out.println(
+                    String.format("Round %d: %.2f%%", num++, currErr * 100));
+            err += currErr;
+            start = end;
+        }
+        return err / fold;
+    }
+
+    ///////////////////////////////////////////////////////
+    ////////////////// PRIVATE FUNCTIONS///////////////////
+    ///////////////////////////////////////////////////////
+    /**
      * assign a label for given candidate queue.
+     * 
      * @param queue
      * @return
      */
@@ -107,31 +199,16 @@ public class KNN {
     }
 
     /**
-     * Predict using default testing set path
-     * 
+     * deep copy a List of ProdSelection.
+     * @param list
      * @return
      */
-    public Result predict() {
-        return predict(TESTPATH);
-    }
-
-    /**
-     * Validate the predict accuracy using result object
-     * 
-     * @param result
-     */
-    public void validate(Result result) {
-        double hit = 0;
-        for (int i = 0; i < result.testSet.size(); i++) {
-            if (result.testSet.get(i).getLabel() == result.resultSet.get(i)) {
-                hit++;
-            }
+    private List<ProdSelection> cloneList(List<ProdSelection> list) {
+        List<ProdSelection> newList = new ArrayList<>();
+        for (ProdSelection p : list) {
+            newList.add(new ProdSelection(p));
         }
-        result.accuracy = hit / result.resultSet.size();
-    }
-
-    private void crossValidation(int fold) {
-
+        return newList;
     }
 
     /**
@@ -220,9 +297,13 @@ public class KNN {
 
     // testing method, using all default settings.
     public static void main(String[] args) {
+        // default
         KNN test = new KNN();
-        Result result = test.predict();
-        test.validate(result);
-        System.out.println(result.accuracy);
+        double result = test.crossValidation(10);
+        System.out.println(String.format("\nResult: %.2f%%", result * 100));
+        // Result result = test.predict(TRAINPATH);
+        // test.validate(result);
+        // System.out.println(result.accuracy);
+
     }
 }
