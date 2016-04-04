@@ -169,6 +169,7 @@ public class KNN {
             err += currErr;
             start = end;
         }
+        System.out.println(String.format("\nResult: %.2f%%", err/fold * 100));
         return err / fold;
     }
 
@@ -280,11 +281,6 @@ public class KNN {
             this.label = l;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Comparable#compareTo(java.lang.Object)
-         */
         @Override
         public int compareTo(Sim o) {
             if (this.score == o.score) {
@@ -300,10 +296,8 @@ public class KNN {
         // default
         KNN test = new KNN();
         double result = test.crossValidation(10);
-        System.out.println(String.format("\nResult: %.2f%%", result * 100));
         // Result result = test.predict(TRAINPATH);
         // test.validate(result);
         // System.out.println(result.accuracy);
-
     }
 }
