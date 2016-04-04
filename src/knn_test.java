@@ -13,46 +13,7 @@ import java.util.Set;
 import java.util.Vector;
 
 public class knn_test {
-    public static void main(String[] args) throws Exception {
-        String FILE_PATH= "trainProdSelection.arff";        
-        double sum = 0;
-        double count = 0;
-        for (int i = 0; i < 100 ; i++) {
-        double num = getResult(FILE_PATH);
-        sum = sum + num;
-        count++;
-        }
-        System.out.println((double)(sum)/count);
-    }
-    private static DataSet readData(String filename) {
-            DataSet data = new DataSet();
-            Scanner scanner = null;
-            try {
-                scanner = new Scanner(new File(filename));
-            } catch (FileNotFoundException exception) {
-                System.out.println("Error: could not find file");
-                System.exit(1);
-            }
-            String line;
-            scanner.nextLine(); // Skip first line
-            while (scanner.hasNextLine()) {
-                line = scanner.nextLine();
-                if (line.length() == 0){
-                    continue;
-                }
-                if (line.equals("@data")) {
-                    
-                    break;
-                }
-                data.addAttribute(line);
-            }
-            while (scanner.hasNextLine()) {
-                data.addInstance(scanner.nextLine());
-            }
-            System.out.println(data.instances.toString());
-            return data;
-        
-    }
+
     public static String getMode(HashMap<String, Double> gMode) {
         String maxMode = null;
         double maxCount = 0;
@@ -67,13 +28,11 @@ public class knn_test {
     }
     public static double getResult(String FILE_PATH, double[] array) throws IOException, FileNotFoundException {
         FileReader in_train = new FileReader(FILE_PATH);
-        FileReader in_test = new FileReader("/testProdSelection.arff");        
+        FileReader in_test = new FileReader("testProdSelection.arff");
       
         BufferedReader br_train = new BufferedReader(in_train);
         BufferedReader br_test = new BufferedReader(in_test);
-        
-        DataSet dataSet = readData(FILE_PATH);
-        ArrayList<Attribute> attributeList = dataSet.attributes;
+
         int result;
         /*
          * load train data
@@ -119,8 +78,7 @@ public class knn_test {
             Element element = new Element(temp);
             DataObject ob_train = new DataObject(element);
             data.add(ob_train);
-            
-            String tempStr = dataSet.instances.get(i).toString();
+
             //  System.out.println(tempStr);
 
         }
