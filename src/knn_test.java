@@ -95,7 +95,6 @@ public class knn_test {
             }
         }
         for (int i = 0; i< allData.size(); i++) {
-            System.out.println("test" + (double)(allData.get(i).getElement().getVacation()/maxVacation));
             allData.get(i).getElement().setNormVacation((double)(allData.get(i).getElement().getVacation()/(double) maxVacation));
             allData.get(i).getElement().setNormCredit((double)(allData.get(i).getElement().getCredit()/(double) maxCredit));
             allData.get(i).getElement().setNormSalary((double)(allData.get(i).getElement().getSalary()/maxSalary));
