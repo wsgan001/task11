@@ -13,21 +13,19 @@ public class knn_test {
         
         FileReader in_train = new FileReader("trainProdSelection.arff");        
         FileReader in_test = new FileReader("testProdSelection.arff");        
-        
+         
         BufferedReader br_train = new BufferedReader(in_train);
         BufferedReader br_test = new BufferedReader(in_test);
         /*
          * load train data
          */
         String line;
-
         ArrayList<String> newList = new ArrayList<String>();
         while ((line = br_train.readLine()) != null) {
             if  (!line.startsWith("@") && !(line.length()==0)) {
                //   System.out.println(line);
                 newList.add(line);
             }
-            
         }
         br_train.close();
         /*
@@ -56,7 +54,7 @@ public class knn_test {
         int nTrainData = (int) (TrainSize*0.9);// 90% train
         ntestData = TrainSize - nTrainData; //10% test
         ArrayList<DataObject> data = new ArrayList<DataObject>();
-        
+       
         for(int i = 0; i < nTrainData; i++) {
             String temp = newList.get(i).toString();
             Element element = new Element(temp);
@@ -74,10 +72,38 @@ public class knn_test {
             ob_test.trueLabel = element.getLabel();
             testData.add(ob_test);
         }
-        System.out.println(testData);
+        // Set Normalization
+        ArrayList<DataObject> allData = new ArrayList<DataObject>();
+        allData.addAll(data);
+        allData.addAll(testData);
+        int maxVacation = 0;
+        int maxCredit = 0;
+        double maxSalary = 0;
+        double maxProperty = 0;
+        for (int i = 0; i< allData.size(); i++) {
+            if (allData.get(i).getElement().getVacation() > maxVacation) {
+                maxVacation = allData.get(i).getElement().getVacation();
+            }
+            if (allData.get(i).getElement().getCredit() > maxCredit) {
+                maxCredit = allData.get(i).getElement().getCredit();
+            }
+            if (allData.get(i).getElement().getSalary() > maxSalary) {
+                maxSalary = allData.get(i).getElement().getSalary();
+            }
+            if (allData.get(i).getElement().getProperty() > maxProperty) {
+                maxProperty = allData.get(i).getElement().getProperty();
+            }
+        }
+        for (int i = 0; i< allData.size(); i++) {
+            System.out.println("test" + (double)(allData.get(i).getElement().getVacation()/maxVacation));
+            allData.get(i).getElement().setNormVacation((double)(allData.get(i).getElement().getVacation()/(double) maxVacation));
+            allData.get(i).getElement().setNormCredit((double)(allData.get(i).getElement().getCredit()/(double) maxCredit));
+            allData.get(i).getElement().setNormSalary((double)(allData.get(i).getElement().getSalary()/maxSalary));
+            allData.get(i).getElement().setNormProperty((double)(allData.get(i).getElement().getProperty()/maxProperty));
+        }   
         int count = 0;
         // Compute for the Distance of all the Test Data
-        for(int z = 0; z < ntestData; z++) {
+        for (int z = 0; z < ntestData; z++) {
             for(int i = 0; i < nTrainData; i++) {
                 Element train = data.get(i).getElement();
                 Element test = testData.get(z).getElement();
@@ -89,10 +115,10 @@ public class knn_test {
                 if (train.getStyle() != test.getStyle()) {
                     dist += 1;
                 }
-                dist += Math.pow(train.getVacation() - test.getVacation(),2);
-                dist += Math.pow(train.getCredit() - test.getCredit(),2);
-                dist += Math.pow(train.getSalary() - test.getSalary(),2);
-                dist += Math.pow(train.getProperty() - test.getProperty(),2);
+                dist += Math.pow(train.getNormVacation() - test.getNormVacation(),2);
+                dist += Math.pow(train.getNormCredit() - test.getNormCredit(),2);
+                dist += Math.pow(train.getNormSalary() - test.getNormSalary(),2);
+                dist += Math.pow(train.getNormProperty() - test.getNormProperty(),2);
                 if (dist == 0) {
                     dist = 1000000;
                     
@@ -102,7 +128,7 @@ public class knn_test {
                 data.get(i).dist = dist;
             }
             Collections.sort(data);
-            //  System.out.println(data);
+            System.out.println(data);
             
             //  Rank all the K neighbors
             HashMap<String, Double> gMode = new HashMap<String, Double>();
@@ -145,3 +171,4 @@ public class knn_test {
         return maxMode;
     }
 }
+
