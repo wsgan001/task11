@@ -1,4 +1,5 @@
 
+
 /**
  * @author Yuheng Li
  * @version 1.0
@@ -11,6 +12,10 @@ public class Element{
         private int credit;
         private double salary;
         private double property;
+        private double normVacation;
+        private double normCredit;
+        private double normSalary;
+        private double normProperty;
         private Label label;
         
 
@@ -58,6 +63,18 @@ public class Element{
 
         public double getProperty() {
             return property;
+        }
+        public double getNormVacation() {
+            return normVacation;
+        }
+        public double getNormCredit() {
+            return normCredit;
+        }
+        public double getNormSalary() {
+            return normSalary;
+        }
+        public double getNormProperty() {
+            return normProperty;
         }
 
         public String getLabel() {
@@ -118,7 +135,18 @@ public class Element{
         public void setProperty(double property) {
             this.property = property;
         }
-
+        public void setNormVacation(double normVacation) {
+            this.normVacation = normVacation;
+        }
+        public void setNormCredit(double normCredit) {
+            this.normCredit = normCredit;
+        }
+        public void setNormSalary(double normSalary) {
+            this.normSalary = normSalary;
+        }
+        public void setNormProperty(double normProperty) {
+            this.normProperty = normProperty;
+        }
         public void setLabel(String key) {
             switch (key) {
             case "C1":
@@ -153,4 +181,5 @@ public class Element{
         C1, C2, C3, C4, C5;
     }
 
-}
+ 
+  
