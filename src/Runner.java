@@ -15,5 +15,4 @@ public class Runner {
         test.validate(result);
         System.out.println(result.accuracy);
     }
-
 }

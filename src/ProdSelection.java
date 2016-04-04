@@ -1,7 +1,4 @@
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.IntPredicate;
 
 /**
  * @author Yuheng Li
@@ -41,7 +38,7 @@ public class ProdSelection {
     }
 
     /**
-     * Pass a list of training prodselection to reset the minmax
+     * Pass a list of training prodselection to reset the minmax.
      * 
      * @param list
      */
@@ -181,7 +178,7 @@ public class ProdSelection {
             break;
         }
     }
-
+    
     enum Type {
         LIB, STU, ENG, PRO, DOC;
     }
@@ -193,6 +190,13 @@ public class ProdSelection {
 //    enum Label {
 //        C1, C2, C3, C4, C5;
 //    }
+    /**
+     * normalize given val using min and max.
+     * @param val
+     * @param min
+     * @param max
+     * @return
+     */
     private double normalize(double val, double min, double max) {
         return (val - min) / (max - min);
     }

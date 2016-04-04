@@ -18,26 +18,25 @@ public class KNN {
     private static final double[] DEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1 };
     private List<ProdSelection> trainData;
     private List<ProdSelection> testData;
-
+    
     /**
-     * constructor Initialize a KNN instance KNN k = new KNN(); set training set
-     * k.setTrain("URL"); predict the test set k.predict("URL"); return a
-     * predict result instance, with all predictions and a accuracy
-     * 
-     * 
+     * Default Constructor, K = 3
      */
     public KNN() {
         this(3);
     }
-
+    
+    /**
+     * Use customized K
+     * @param k
+     */
     public KNN(int k) {
         this.k = k;
-        
     }
     
     /**
-     * Use default weight and train set to predict the given test set
-     * @param path
+     * Use default weight and training set to predict the given test set
+     * @param path test set file path
      * @return
      */
     public Result predict(String path) {
@@ -53,11 +52,11 @@ public class KNN {
     }
     
     /**
-     * Predict the test result using given trainset and weight
-     * @param train
-     * @param test
-     * @param w
-     * @return
+     * Predict the test result using given training set and weight
+     * @param train training set
+     * @param test testing set
+     * @param w weight
+     * @return Result object
      */
     public Result predict(List<ProdSelection> train, List<ProdSelection> test,
             double[] w) {
@@ -90,11 +89,19 @@ public class KNN {
         result.resultSet = resultSet;
         return result;
     }
-
+    
+    /**
+     * Predict using default testing set path
+     * @return
+     */
     public Result predict() {
         return predict(TESTPATH);
     }
     
+    /**
+     * Validate the predict accuracy using result object
+     * @param result
+     */
     public void validate(Result result) {
         double hit = 0;
         for(int i = 0; i < result.testSet.size(); i++) {
@@ -108,7 +115,13 @@ public class KNN {
     private void crossValidation(int fold) {
 
     }
-
+    
+    /**
+     * Load training set / testing set
+     * @param path file path
+     * @param isTrain training set: true, testing set: false
+     * @throws IOException
+     */
     private void loadData(String path, boolean isTrain) throws IOException {
         List<ProdSelection> result = new ArrayList<ProdSelection>();
         BufferedReader br = new BufferedReader(new FileReader(path));
@@ -152,7 +165,13 @@ public class KNN {
             return 1 / Math.sqrt(dist);
         }
     }
-
+    
+    /**
+     * similarity object, stores current predicted label and score
+     * @author Yuheng Li
+     * @version 1.0
+     * @since Apr 3, 2016
+     */
     private class Sim implements Comparable<Sim> {
         double score;
         int label;
@@ -175,5 +194,13 @@ public class KNN {
                 return -Double.compare(this.score, o.score);
             }
         }
+    }
+    
+    // testing method, using all default settings.
+    public static void main(String[] args) {
+        KNN test = new KNN();
+        Result result = test.predict();
+        test.validate(result);
+        System.out.println(result.accuracy);
     }
 }
