@@ -1,21 +1,80 @@
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.Vector;
 
 public class knn_test {
     public static void main(String[] args) throws Exception {
+        String FILE_PATH= "trainProdSelection.arff";        
+        double sum = 0;
+        double count = 0;
+        for (int i = 0; i < 100 ; i++) {
+        double num = getResult(FILE_PATH);
+        sum = sum + num;
+        count++;
+        }
+        System.out.println((double)(sum)/count);
+    }
+    private static DataSet readData(String filename) {
+            DataSet data = new DataSet();
+            Scanner scanner = null;
+            try {
+                scanner = new Scanner(new File(filename));
+            } catch (FileNotFoundException exception) {
+                System.out.println("Error: could not find file");
+                System.exit(1);
+            }
+            String line;
+            scanner.nextLine(); // Skip first line
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                if (line.length() == 0){
+                    continue;
+                }
+                if (line.equals("@data")) {
+                    
+                    break;
+                }
+                data.addAttribute(line);
+            }
+            while (scanner.hasNextLine()) {
+                data.addInstance(scanner.nextLine());
+            }
+            System.out.println(data.instances.toString());
+            return data;
         
-        FileReader in_train = new FileReader("trainProdSelection.arff");        
-        FileReader in_test = new FileReader("testProdSelection.arff");        
-         
+    }
+    public static String getMode(HashMap<String, Double> gMode) {
+        String maxMode = null;
+        double maxCount = 0;
+        for(String d : gMode.keySet()) {
+            double tCount = gMode.get(d);
+            if (tCount > maxCount) {
+                maxCount = tCount;
+                maxMode = d;
+            }
+        }
+        return maxMode;
+    }
+    public static double getResult(String FILE_PATH, double[] array) throws IOException, FileNotFoundException {
+        FileReader in_train = new FileReader(FILE_PATH);
+        FileReader in_test = new FileReader("/testProdSelection.arff");        
+      
         BufferedReader br_train = new BufferedReader(in_train);
         BufferedReader br_test = new BufferedReader(in_test);
+        
+        DataSet dataSet = readData(FILE_PATH);
+        ArrayList<Attribute> attributeList = dataSet.attributes;
+        int result;
         /*
          * load train data
          */
@@ -35,7 +94,7 @@ public class knn_test {
         ArrayList<String> newList2 = new ArrayList<String>();
         while ((line2 = br_test.readLine()) != null) {
             if (!line2.startsWith("@") && !(line2.length()==0)) {
-                //   System.out.println(line);
+                // System.out.println(line);
                 newList2.add(line2);
                // System.out.println(Arrays.toString(tokens));
             }
@@ -46,23 +105,27 @@ public class knn_test {
         int nAttrib = 6;  
         int TrainSize = newList.size();    // Number of Train Data
 
-        int ntestData = newList2.size();     // Number of Test Data
-        System.out.println(ntestData);
+        int ntestData = newList2.size();   // Number of Test Data
         // Read Train Data with nAttribe Features
         Collections.shuffle(newList);
         
-        int nTrainData = (int) (TrainSize*0.9);// 90% train
-        ntestData = TrainSize - nTrainData; //10% test
+        int nTrainData = (int) (TrainSize*0.9); // 90% train
+        ntestData = TrainSize - nTrainData; // 10% test
         ArrayList<DataObject> data = new ArrayList<DataObject>();
-       
+        
+        
         for(int i = 0; i < nTrainData; i++) {
             String temp = newList.get(i).toString();
             Element element = new Element(temp);
             DataObject ob_train = new DataObject(element);
             data.add(ob_train);
+            
+            String tempStr = dataSet.instances.get(i).toString();
+            //  System.out.println(tempStr);
+
         }
         System.out.println(data.size());
-        // Read Test Data 
+        //   Read Test Data 
         ArrayList<DataObject> testData = new ArrayList<DataObject>();
         //   ntestData = 1;
         for(int i = nTrainData; i < TrainSize; i++) {
@@ -124,16 +187,16 @@ public class knn_test {
                 Element test = testData.get(z).getElement();
                 double dist =  0;
                 if (train.getType() != test.getType()) {
-                    dist += 1;
+                    dist += array[0]*1;
                     
                 }
                 if (train.getStyle() != test.getStyle()) {
-                    dist += 1;
+                    dist += array[1]*1;
                 }
-                dist += Math.pow(train.getNormVacation() - test.getNormVacation(),2);
-                dist += Math.pow(train.getNormCredit() - test.getNormCredit(),2);
-                dist += Math.pow(train.getNormSalary() - test.getNormSalary(),2);
-                dist += Math.pow(train.getNormProperty() - test.getNormProperty(),2);
+                dist += array[2]*Math.pow(train.getNormVacation() - test.getNormVacation(),2);
+                dist += array[3]*Math.pow(train.getNormCredit() - test.getNormCredit(),2);
+                dist += array[4]*Math.pow(train.getNormSalary() - test.getNormSalary(),2);
+                dist += array[5]*Math.pow(train.getNormProperty() - test.getNormProperty(),2);
                 if (dist == 0) {
                     dist = 1000000;
                     
@@ -143,7 +206,7 @@ public class knn_test {
                 data.get(i).dist = dist;
             }
             Collections.sort(data);
-            System.out.println(data);
+            //  System.out.println(data);
             
             //  Rank all the K neighbors
             HashMap<String, Double> gMode = new HashMap<String, Double>();
@@ -153,7 +216,7 @@ public class knn_test {
                 if (val >= data.get(i).dist) {
                     rank++;
                     String temp_label = data.get(i).getElement().getLabel();
-                 //   System.out.println(gMode.get(data.get(i).getElement().getLabel()));
+                    // System.out.println(gMode.get(data.get(i).getElement().getLabel()));
                     if (gMode.containsKey(temp_label)) {
                         double temp_dist = gMode.get(data.get(i).getElement().getLabel());
                         gMode.put(temp_label, temp_dist + data.get(i).dist);
@@ -171,19 +234,8 @@ public class knn_test {
                 count++;
             }
         }
-        System.out.println("The accurency: "+ (double)count/ntestData);
+        System.out.println("The accurency: "+ (double) count/ntestData);
+        return (double) count/ntestData;
     }
-    public static String getMode(HashMap<String, Double> gMode) {
-        String maxMode = null;
-        double maxCount = 0;
-        for(String d : gMode.keySet()) {
-            double tCount = gMode.get(d);
-            if (tCount > maxCount) {
-                maxCount = tCount;
-                maxMode = d;
-            }
-        }
-        return maxMode;
-    }
+ 
 }
-
