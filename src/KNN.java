@@ -22,9 +22,10 @@ public class KNN {
     private static final double[] DEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1 };
     private List<ProdSelection> trainData = new ArrayList<ProdSelection>();
     private List<ProdSelection> testData = new ArrayList<ProdSelection>();
+    private List<ProdSelection> shuffled = new ArrayList<ProdSelection>();
 
     ///////////////////////////////////////////////////////
-    ////////////////// CONSTRUCTORS/////////////////////////
+    ////////////////// CONSTRUCTORS////////////////////////
     ///////////////////////////////////////////////////////
     /**
      * Default Constructor, K = 3
@@ -40,6 +41,14 @@ public class KNN {
      */
     public KNN(int k) {
         this.k = k;
+        try {
+            loadData(TRAINPATH, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int size = trainData.size();
+        shuffled = cloneList(trainData);
+        Collections.shuffle(shuffled);
     }
 
     ///////////////////////////////////////////////////////
@@ -121,7 +130,7 @@ public class KNN {
     }
 
     public double crossValidation(int fold) {
-        return crossValidation(fold, DEFAULTWEIGHT);
+        return crossValidation(fold, DEFAULTWEIGHT, shuffled);
     }
 
     /**
@@ -133,7 +142,7 @@ public class KNN {
      * @return average accuracy
      */
     public double crossValidation(double[] w) {
-        return crossValidation(10, w);
+        return crossValidation(10, w, shuffled);
     }
     
     /**
@@ -142,15 +151,16 @@ public class KNN {
      * @param w
      * @return
      */
-    public double crossValidation(int fold, double[] w) {
-        try {
-            loadData(TRAINPATH, true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public double crossValidation(int fold, double[] w, List<ProdSelection> shuffled) {
+//        try {
+//            loadData(TRAINPATH, true);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        int size = trainData.size();
+//        List<ProdSelection> shuffled = cloneList(trainData);
+//        Collections.shuffle(shuffled);
         int size = trainData.size();
-        List<ProdSelection> shuffled = cloneList(trainData);
-        Collections.shuffle(shuffled);
         int testSize = size / fold;
         int mod = size % fold;
         int cnt = 0;
@@ -164,12 +174,12 @@ public class KNN {
             List<ProdSelection> train = cloneList(shuffled.subList(0, start));
             train.addAll(cloneList(shuffled.subList(end, size)));
             double currErr = validate(predict(train, test, w));
-            System.out.println(
-                    String.format("Round %d: %.2f%%", num++, currErr * 100));
+            // System.out.println(
+                    // String.format("Round %d: %.2f%%", num++, currErr * 100));
             err += currErr;
             start = end;
         }
-        System.out.println(String.format("\nResult: %.2f%%", err/fold * 100));
+        // System.out.println(String.format("\nResult: %.2f%%", err/fold * 100));
         return err / fold;
     }
 
