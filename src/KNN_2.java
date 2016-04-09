@@ -12,11 +12,11 @@ import java.util.PriorityQueue;
  * @since Mar 28, 2016
  */
 public class KNN_2 {
-    private static final int LABLENUM = 5;
+    private static final int LABLENUM = 2;
     private static final String TRAINPATH = "trainProdIntro.binary.arff";
     private static final String TESTPATH = "testProdIntro.binary.arff";
     private static int k = 3;
-    private static final double[] DEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1 };
+    private static final double[] DEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1, 1, 1};
     private List trainData = new ArrayList();
     private List testData = new ArrayList();
     private List shuffled = new ArrayList();
