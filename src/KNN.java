@@ -1,15 +1,10 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
-
-import javax.xml.stream.events.StartDocument;
-
-import temp.ProdIntro;
 
 /**
  * @author Yuheng Li
@@ -151,6 +146,7 @@ public class KNN {
             e.printStackTrace();
         }
         int size = trainData.size();
+        if(fold > size) fold = size;
         List<ProdSelection> shuffled = cloneList(trainData);
         Collections.shuffle(shuffled);
         int testSize = size / fold;
@@ -379,7 +375,8 @@ public class KNN {
     public static void main(String[] args) {
         // default
         KNN test = new KNN();
-        double result = test.crossValidation(10);
+        double[] weight = {0.002, 0.00, 0.006, 0.172, 0.013, 0.109};
+        double result = test.crossValidation(weight);
         // Result result = test.predict(TRAINPATH);
         // test.validate(result);
         // System.out.println(result.accuracy);
