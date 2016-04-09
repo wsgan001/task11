@@ -6,7 +6,7 @@ import java.util.List;
  * @since Apr 1, 2016
  */
 public class Result {
-    List<ProdSelection> testSet;
+    List<ProdIntro> testSet;
     List<Integer> resultSet;
     double accuracy;
 }

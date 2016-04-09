@@ -11,14 +11,15 @@ import java.util.PriorityQueue;
  * @version 1.0
  * @since Mar 28, 2016
  */
-public class KNN {
+public class KNN_2 {
     private static final int LABLENUM = 5;
-    private static final String TRAINPATH = "trainProdSelection.arff";
-    private static final String TESTPATH = "testProdSelection.arff";
+    private static final String TRAINPATH = "trainProdIntro.binary.arff";
+    private static final String TESTPATH = "testProdIntro.binary.arff";
     private static int k = 3;
     private static final double[] DEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1 };
-    private List<ProdSelection> trainData = new ArrayList<ProdSelection>();
-    private List<ProdSelection> testData = new ArrayList<ProdSelection>();
+    private List trainData = new ArrayList();
+    private List testData = new ArrayList();
+    private List shuffled = new ArrayList();
 
     ///////////////////////////////////////////////////////
     ////////////////// CONSTRUCTORS/////////////////////////
@@ -26,17 +27,25 @@ public class KNN {
     /**
      * Default Constructor, K = 3
      */
-    public KNN() {
+    public KNN_2() {
         this(3);
     }
 
     /**
      * Use customized K
-     * 
+     *
      * @param k
      */
-    public KNN(int k) {
+    public KNN_2(int k) {
         this.k = k;
+        try {
+            loadData(TRAINPATH, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int size = trainData.size();
+        shuffled = cloneList(trainData);
+        Collections.shuffle(shuffled);
     }
 
     ///////////////////////////////////////////////////////
@@ -45,7 +54,7 @@ public class KNN {
 
     /**
      * Predict using default testing set path
-     * 
+     *
      * @return
      */
     public Result predict() {
@@ -54,7 +63,7 @@ public class KNN {
 
     /**
      * Use default weight and training set to predict the given test set
-     * 
+     *
      * @param path
      *            test set file path
      * @return
@@ -73,7 +82,7 @@ public class KNN {
 
     /**
      * Predict the test result using given training set and weight
-     * 
+     *
      * @param train
      *            training set
      * @param test
@@ -82,15 +91,15 @@ public class KNN {
      *            weight
      * @return Result object
      */
-    public Result predict(List<ProdSelection> train, List<ProdSelection> test,
-            double[] w) {
+    public Result predict(List<ProdIntro> train, List<ProdIntro> test,
+                          double[] w) {
         Result result = new Result();
         List<Integer> resultSet = new ArrayList<>();
         // for each element in test
-        for (ProdSelection te : test) {
+        for (ProdIntro te : test) {
             // for each element in train
             PriorityQueue<Sim> queue = new PriorityQueue<>();
-            for (ProdSelection tr : train) {
+            for (ProdIntro tr : train) {
                 // calculate the similarity of te and tr
                 queue.offer(new Sim(calculateSim(te, tr, w), tr.getLabel()));
             }
@@ -103,7 +112,7 @@ public class KNN {
 
     /**
      * Validate the predict accuracy using result object
-     * 
+     *
      * @param result
      */
     public double validate(Result result) {
@@ -124,7 +133,7 @@ public class KNN {
     /**
      * Take a weight vecotr and conduct 10 fold validation, return an average
      * accuracy.
-     * 
+     *
      * @param w
      *            weight vector, size = 6
      * @return average accuracy
@@ -132,7 +141,7 @@ public class KNN {
     public double crossValidation(double[] w) {
         return crossValidation(10, w);
     }
-    
+
     /**
      * Conduct x fold cross validation with weight w
      * @param fold
@@ -140,14 +149,14 @@ public class KNN {
      * @return
      */
     public double crossValidation(int fold, double[] w) {
-        try {
-            loadData(TRAINPATH, true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            loadData(TRAINPATH, true);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         int size = trainData.size();
         if(fold > size) fold = size;
-        List<ProdSelection> shuffled = cloneList(trainData);
+        List shuffled = cloneList(trainData);
         Collections.shuffle(shuffled);
         int testSize = size / fold;
         int mod = size % fold;
@@ -157,17 +166,17 @@ public class KNN {
         double err = 0;
         while (start < size) {
             int end = start + testSize + (cnt++ < mod ? 1 : 0);
-            List<ProdSelection> test = cloneList(
+            List test = cloneList(
                     shuffled.subList(start, Math.min(end, size)));
-            List<ProdSelection> train = cloneList(shuffled.subList(0, start));
+            List train = cloneList(shuffled.subList(0, start));
             train.addAll(cloneList(shuffled.subList(end, size)));
             double currErr = validate(predict(train, test, w));
-            System.out.println(
-                    String.format("Round %d: %.2f%%", num++, currErr * 100));
+           // System.out.println(
+             //       String.format("Round %d: %.2f%%", num++, currErr * 100));
             err += currErr;
             start = end;
         }
-        System.out.println(String.format("\nResult: %.2f%%", err/fold * 100));
+        //System.out.println(String.format("\nResult: %.2f%%", err/fold * 100));
         return err / fold;
     }
 
@@ -176,7 +185,7 @@ public class KNN {
     ///////////////////////////////////////////////////////
     /**
      * assign a label for given candidate queue.
-     * 
+     *
      * @param queue
      * @return
      */
@@ -202,17 +211,17 @@ public class KNN {
      * @param list
      * @return
      */
-    private List<ProdSelection> cloneList(List<ProdSelection> list) {
-        List<ProdSelection> newList = new ArrayList<>();
-        for (ProdSelection p : list) {
-            newList.add(new ProdSelection(p));
+    private List<ProdIntro> cloneList(List<ProdIntro> list) {
+        List<ProdIntro> newList = new ArrayList<>();
+        for (ProdIntro p : list) {
+            newList.add(new ProdIntro(p));
         }
         return newList;
     }
 
     /**
      * Load training set / testing set
-     * 
+     *
      * @param path
      *            file path
      * @param isTrain
@@ -220,93 +229,67 @@ public class KNN {
      * @throws IOException
      */
     private void loadData(String path, boolean isTrain) throws IOException {
-        List<ProdSelection> result = new ArrayList<ProdSelection>();
+        List result = new ArrayList();
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
         while ((line = br.readLine()) != null) {
             if (!line.startsWith("@") && !(line.length() == 0)) {
-                result.add(new ProdSelection(line));
+                result.add(new ProdIntro(line));
             }
         }
         if (isTrain) {
             trainData = result;
-            ProdSelection.resetMinMax(trainData);
+            ProdIntro.resetMinMax(trainData);
         } else {
             testData = result;
         }
     }
 
-    /**
-     * calculate the similarity of p1 and p2, regarding to weight vetor w
-     * 
-     * @param p1
-     * @param p2
-     * @return similarity between p1 and p2, from 0 to Double.MAX_VALUE;
-     */
-    private double calculateSim(ProdSelection p1, ProdSelection p2,
-            double[] w) {
-        double dist = 0;
-        if (p1.getType() != p2.getType()) {
-            dist += 1 * w[0];
-        }
-        if (p1.getStyle() != p2.getStyle()) {
-            dist += 1 * w[1];
-        }
-        dist += Math.pow(p1.getNVacation() - p2.getNVacation(), 2) * w[2];
-        dist += Math.pow(p1.getNCredit() - p2.getNCredit(), 2) * w[3];
-        dist += Math.pow(p1.getNSalary() - p2.getNSalary(), 2) * w[4];
-        dist += Math.pow(p1.getNProperty() - p2.getNProperty(), 2) * w[5];
-        if (dist == 0) {
-            return Double.MAX_VALUE;
-        } else {
-            return 1 / Math.sqrt(dist);
-        }
-    }
-    
+
     /**
      * calculate the similarity of p1 and p2 of ProdIntro class given simMatrix and weight w
-     * 
-     * @param p1 ProdIntro 
+     *
+     * @param p1 ProdIntro
      * @param p2 ProdIntro
      * @return similarity between p1 and p2, from 0 to Double.MAX_VALUE;
      */
     private double calculateSim(ProdIntro p1, ProdIntro p2,
-            double[] w) {
+                                double[] w) {
         double dist = 0;
         int row;
         int col;
-        
-        double[][] simType = new double[5][5];
+
+        double[][] simType = new double[6][6];
         for (int i = 0; i < 5; i++) {
             simType[i][i] = 1;
         }
         simType[0][1] = simType[1][0] = 0;
         simType[0][2] = simType[2][0] = simType[3][4] = 0.1;
         simType[0][3] = simType[3][0] = 0.3;
-        simType[0][4] = simType[4][0] = simType[2][3] = simType[2][4] = 
+        simType[0][4] = simType[4][0] = simType[2][3] = simType[2][4] =
                 simType[3][2] = simType[5][0] = simType[5][2] = 0.2;
-        simType[1][2] = simType[2][1] = simType[1][3] = simType[1][4] = 
+        simType[1][2] = simType[2][1] = simType[1][3] = simType[1][4] =
                 simType[3][1] = simType[5][1] = 0;
-       
+
         double[][] simCustomer= new double[5][5];
         for (int i = 0; i < 5; i++) {
             simCustomer[i][i] = 1;
         }
-        simCustomer[0][1] = simCustomer[0][3] = simCustomer[1][0] = 
+        simCustomer[0][1] = simCustomer[0][3] = simCustomer[1][0] =
                 simCustomer[1][2] = simCustomer[2][1] = simCustomer[3][0] = 0.2;
-        simCustomer[0][2] = simCustomer[1][3] = simCustomer[2][0] = 
+        simCustomer[0][2] = simCustomer[1][3] = simCustomer[2][0] =
                 simCustomer[2][3] = simCustomer[3][1] = simCustomer[3][2] = 0.1;
-        simCustomer[0][4] = simCustomer[1][4] = simCustomer[2][4] = 
-                simCustomer[3][4] = simCustomer[4][0] = simCustomer[4][1] = 
-                simCustomer[4][2] = simCustomer[4][3] = 0;
-        
+        simCustomer[0][4] = simCustomer[1][4] = simCustomer[2][4] =
+                simCustomer[3][4] = simCustomer[4][0] = simCustomer[4][1] =
+                        simCustomer[4][2] = simCustomer[4][3] = 0;
+
         double[][] simSize= new double[3][3];
         for (int i = 0; i < 3; i++) {
             simSize[i][i] = 1;
         }
         simSize[0][1] = simSize[1][0] = simSize[1][2] = simSize[2][1] = 0.1;
         simSize[0][2] = simSize[2][0] = 0;
-        
+
         double[][] simPromotion= new double[4][4];
         for (int i = 0; i < 4; i++) {
             simPromotion[i][i] = 1;
@@ -316,26 +299,26 @@ public class KNN {
         simPromotion[1][2] = simPromotion[2][1] = 0.1;
         simPromotion[1][3] = simPromotion[3][1] = 0.5;
         simPromotion[2][3] = simPromotion[3][2] = 0.4;
-        
+
         row = p1.getType().ordinal();
         col = p2.getType().ordinal();
         dist += simType[row][col] * w[0];
-       
+
         row = p1.getCustomer().ordinal();
         col = p2.getCustomer().ordinal();
         dist += simCustomer[row][col] * w[1];
-        
+
         dist += Math.pow(p1.getNFee() - p2.getNFee(), 2) * w[2];
         dist += Math.pow(p1.getNBudget() - p2.getNBudget(), 2) * w[3];
-        
+
         row = p1.getSize().ordinal();
         col = p2.getSize().ordinal();
         dist += simSize[row][col] * w[4];
-        
+
         row = p1.getPromotion().ordinal();
         col = p2.getPromotion().ordinal();
         dist += simPromotion[row][col] * w[5];
-        
+
         dist += Math.pow(p1.getNRate() - p2.getNRate(), 2) * w[6];
         dist += Math.pow(p1.getNPeriod() - p2.getNPeriod(), 2) * w[7];
         if (dist == 0) {
@@ -347,7 +330,7 @@ public class KNN {
 
     /**
      * similarity object, stores current predicted label and score
-     * 
+     *
      * @author Yuheng Li
      * @version 1.0
      * @since Apr 3, 2016
@@ -374,7 +357,7 @@ public class KNN {
     // testing method, using all default settings.
     public static void main(String[] args) {
         // default
-        KNN test = new KNN();
+        KNN_2 test = new KNN_2();
         double[] weight = {0.002, 0.00, 0.006, 0.172, 0.013, 0.109};
         double result = test.crossValidation(weight);
         // Result result = test.predict(TRAINPATH);
