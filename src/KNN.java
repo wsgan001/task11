@@ -9,6 +9,8 @@ import java.util.PriorityQueue;
 
 import javax.xml.stream.events.StartDocument;
 
+import temp.ProdIntro;
+
 /**
  * @author Yuheng Li
  * @version 1.0
@@ -258,6 +260,88 @@ public class KNN {
         dist += Math.pow(p1.getNCredit() - p2.getNCredit(), 2) * w[3];
         dist += Math.pow(p1.getNSalary() - p2.getNSalary(), 2) * w[4];
         dist += Math.pow(p1.getNProperty() - p2.getNProperty(), 2) * w[5];
+        if (dist == 0) {
+            return Double.MAX_VALUE;
+        } else {
+            return 1 / Math.sqrt(dist);
+        }
+    }
+    
+    /**
+     * calculate the similarity of p1 and p2 of ProdIntro class given simMatrix and weight w
+     * 
+     * @param p1 ProdIntro 
+     * @param p2 ProdIntro
+     * @return similarity between p1 and p2, from 0 to Double.MAX_VALUE;
+     */
+    private double calculateSim(ProdIntro p1, ProdIntro p2,
+            double[] w) {
+        double dist = 0;
+        int row;
+        int col;
+        
+        double[][] simType = new double[5][5];
+        for (int i = 0; i < 5; i++) {
+            simType[i][i] = 1;
+        }
+        simType[0][1] = simType[1][0] = 0;
+        simType[0][2] = simType[2][0] = simType[3][4] = 0.1;
+        simType[0][3] = simType[3][0] = 0.3;
+        simType[0][4] = simType[4][0] = simType[2][3] = simType[2][4] = 
+                simType[3][2] = simType[5][0] = simType[5][2] = 0.2;
+        simType[1][2] = simType[2][1] = simType[1][3] = simType[1][4] = 
+                simType[3][1] = simType[5][1] = 0;
+       
+        double[][] simCustomer= new double[5][5];
+        for (int i = 0; i < 5; i++) {
+            simCustomer[i][i] = 1;
+        }
+        simCustomer[0][1] = simCustomer[0][3] = simCustomer[1][0] = 
+                simCustomer[1][2] = simCustomer[2][1] = simCustomer[3][0] = 0.2;
+        simCustomer[0][2] = simCustomer[1][3] = simCustomer[2][0] = 
+                simCustomer[2][3] = simCustomer[3][1] = simCustomer[3][2] = 0.1;
+        simCustomer[0][4] = simCustomer[1][4] = simCustomer[2][4] = 
+                simCustomer[3][4] = simCustomer[4][0] = simCustomer[4][1] = 
+                simCustomer[4][2] = simCustomer[4][3] = 0;
+        
+        double[][] simSize= new double[3][3];
+        for (int i = 0; i < 3; i++) {
+            simSize[i][i] = 1;
+        }
+        simSize[0][1] = simSize[1][0] = simSize[1][2] = simSize[2][1] = 0.1;
+        simSize[0][2] = simSize[2][0] = 0;
+        
+        double[][] simPromotion= new double[4][4];
+        for (int i = 0; i < 4; i++) {
+            simPromotion[i][i] = 1;
+        }
+        simPromotion[0][1] = simPromotion[1][0] = 0.8;
+        simPromotion[0][2] = simPromotion[0][3] = simPromotion[2][0] = simPromotion[3][0] = 0;
+        simPromotion[1][2] = simPromotion[2][1] = 0.1;
+        simPromotion[1][3] = simPromotion[3][1] = 0.5;
+        simPromotion[2][3] = simPromotion[3][2] = 0.4;
+        
+        row = p1.getType().ordinal();
+        col = p2.getType().ordinal();
+        dist += simType[row][col] * w[0];
+       
+        row = p1.getCustomer().ordinal();
+        col = p2.getCustomer().ordinal();
+        dist += simCustomer[row][col] * w[1];
+        
+        dist += Math.pow(p1.getNFee() - p2.getNFee(), 2) * w[2];
+        dist += Math.pow(p1.getNBudget() - p2.getNBudget(), 2) * w[3];
+        
+        row = p1.getSize().ordinal();
+        col = p2.getSize().ordinal();
+        dist += simSize[row][col] * w[4];
+        
+        row = p1.getPromotion().ordinal();
+        col = p2.getPromotion().ordinal();
+        dist += simPromotion[row][col] * w[5];
+        
+        dist += Math.pow(p1.getNRate() - p2.getNRate(), 2) * w[6];
+        dist += Math.pow(p1.getNPeriod() - p2.getNPeriod(), 2) * w[7];
         if (dist == 0) {
             return Double.MAX_VALUE;
         } else {
