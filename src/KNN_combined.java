@@ -43,7 +43,6 @@ public class KNN_combined {
             TESTPATH = "testProdIntro.binary.arff";
             introTrain = new ArrayList<ProdIntro>();
             introTest = new ArrayList<ProdIntro>();
-            List<ProdIntro> shuffled = new ArrayList<ProdIntro>();
             try {
                 loadData(TRAINPATH, true);
             } catch (IOException e) {
@@ -212,8 +211,7 @@ public class KNN_combined {
             int size = introTrain.size();
             if (fold > size)
                 fold = size;
-            List<ProdIntro> shuffled = cloneIntroList(introTrain);
-            Collections.shuffle(shuffled);
+            List<ProdIntro> shuffled = introShuffled;
             int testSize = size / fold;
             int mod = size % fold;
             int cnt = 0;
@@ -238,8 +236,7 @@ public class KNN_combined {
             int size = selectionTrain.size();
             if (fold > size)
                 fold = size;
-            List<ProdSelection> shuffled = cloneSelectionList(selectionTrain);
-            Collections.shuffle(shuffled);
+            List<ProdSelection> shuffled = selectionShuffled;
             int testSize = size / fold;
             int mod = size % fold;
             int cnt = 0;
@@ -356,7 +353,7 @@ public class KNN_combined {
                 selectionTrain = result;
                 ProdSelection.resetMinMax(selectionTrain);
             } else {
-                selectionTrain = result;
+                selectionTest = result;
             }
             br.close();
         }
@@ -446,16 +443,15 @@ public class KNN_combined {
     public static void main(String[] args) {
 //        // default
         KNN_combined knn = new KNN_combined(ProdIntro.class, 3);
-        double[] weight = {12.0, 11.0, 18.0, 64.0, 3.0, 1.0, 2.0, 28.0};
+        double[] weight = {2.0, 4.0, 3.0, 43.0, 1.0, 1.0, 2.0, 32.0};
         Result result = knn.predict(TESTPATH, weight);
 //        // test.validate(result);
-        System.out.println(result.accuracy);
         for(Integer i : result.resultSet) {
             System.out.println(i);
         }
-
+        System.out.println("-----------------------------------------");
         KNN_combined knn_2 = new KNN_combined(ProdSelection.class, 3);
-        double[] weight_2 = {12.0, 11.0, 18.0, 64.0, 3.0, 1.0};
+        double[] weight_2 = {2.0, 0.0, 6.0, 172.0, 13.0, 109.0};
         result = knn_2.predict(TESTPATH, weight_2);
 //        // test.validate(result);
         System.out.println(result.accuracy);

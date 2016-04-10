@@ -15,7 +15,7 @@ import javax.xml.stream.events.StartDocument;
  * @since Mar 28, 2016
  */
 public class KNN {
-    private static final int LABLENUM = 5;
+    private static final int LABLENUM = 6;
     private static final String TRAINPATH = "trainProdSelection.arff";
     private static final String TESTPATH = "testProdSelection.arff";
     private static int k = 3;
@@ -305,9 +305,12 @@ public class KNN {
     public static void main(String[] args) {
         // default
         KNN test = new KNN();
-        double result = test.crossValidation(10);
-        // Result result = test.predict(TRAINPATH);
+        //double result = test.crossValidation(10);
+        Result result = test.predict(TRAINPATH);
+
         // test.validate(result);
-        // System.out.println(result.accuracy);
+        for (Integer i : result.resultSet){
+            System.out.println(i);
+        }
     }
 }

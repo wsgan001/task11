@@ -5,7 +5,7 @@ import java.util.*;
  */
 public class WVector {
     private static double[] w = {1, 1, 1, 1, 1, 1};
-    private static final int DROP = 10;
+    private static final int DROP = 100;
 
     public static void main(String[] args) {
 
@@ -55,7 +55,8 @@ public class WVector {
         int winCount = 0;
         double accuracy = 0;
         for (int i = 0; i < 100; i++) {
-            KNN knn = new KNN();
+            KNN_combined knn = new KNN_combined(ProdSelection.class, 3);
+            // KNN knn = new KNN();
             double scoreNew = knn.crossValidation(wNew);
             accuracy += scoreNew;
             // System.out.println("New score: " + scoreNew);
@@ -76,8 +77,8 @@ public class WVector {
     }
 
     private static double[] optimize (double[] w) {
-        KNN knn = new KNN();
-
+         KNN_combined knn = new KNN_combined(ProdSelection.class, 3);
+        //KNN knn = new KNN();
         double[] wTemp  = new double[6];
         System.arraycopy(w, 0, wTemp, 0, 6);
 

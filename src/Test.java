@@ -9,5 +9,9 @@ public class Test {
         double accuracy = knn.crossValidation(w);
         //Result result= knn.predict();
         System.out.println(accuracy);
+
+        KNN_combined knn_combined = new KNN_combined(ProdSelection.class, 3);
+        accuracy = knn_combined.crossValidation(w);
+        System.out.println(accuracy);
     }
 }
