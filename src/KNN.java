@@ -17,13 +17,18 @@ public class KNN {
     private static String TESTPATH;
     private static List<ProdSelection> selectionTrain;
     private static List<ProdIntro> introTrain;
+    private static List<ProdIntroReal> realTrain;
     private static List<ProdSelection> selectionTest;
     private static List<ProdIntro> introTest;
+    private static List<ProdIntroReal> realTest;
     private static List<ProdSelection> selectionShuffled;
     private static List<ProdIntro> introShuffled;
+    private static List<ProdIntroReal> realShuffled;
+    
     private static int k = 3;
     private static final double[] SelectionDEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1};
     private static final double[] IntroDEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1, 1, 1 };
+    private static final double[] realDEFAULTWEIGHT = {10.0, 9.0, 0.0, 164.0, 1.0, 1.0, 23.0, 34.0};;
     
     ///////////////////////////////////////////////////////
     ////////////////// CONSTRUCTORS/////////////////////////
