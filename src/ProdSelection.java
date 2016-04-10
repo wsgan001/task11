@@ -1,3 +1,5 @@
+package knn;
+
 import java.util.List;
 
 /**
@@ -31,7 +33,11 @@ public class ProdSelection {
         setCredit(Integer.parseInt(params[3]));
         setSalary(Double.parseDouble(params[4]));
         setProperty(Double.parseDouble(params[5]));
-        setLabel(params[6]);
+        if (params.length == 7) {
+            setLabel(params[6]);
+        } else {
+            setLabel("C1");
+        }
     }
 
     public ProdSelection() {
