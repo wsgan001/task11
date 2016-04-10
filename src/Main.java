@@ -5,10 +5,10 @@ import java.text.DecimalFormat;
 
 public class Main {
     public static void main(String[] args) {
-        String train = "/Users/linjiaruc/Documents/Java/BeginningJava/data mining/src/trainProdIntro.binary.arff";
-        String test = "/Users/linjiaruc/Documents/Java/BeginningJava/data mining/src/testProdIntro.binary.arff";
-        String train2 = "/Users/linjiaruc/Documents/Java/BeginningJava/data mining/src/trainProdSelection.arff";
-        String test2 = "/Users/linjiaruc/Documents/Java/BeginningJava/data mining/src/testProdSelection.arff";
+        String train = "/trainProdIntro.binary.arff";
+        String test = "/testProdIntro.binary.arff";
+        String train2 = "/trainProdSelection.arff";
+        String test2 = "/testProdSelection.arff";
         
         DecimalFormat df = new DecimalFormat("###.00");
         
