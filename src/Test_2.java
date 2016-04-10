@@ -8,6 +8,7 @@ public class Test_2 {
     public static void main(String[] args) {
         KNN_2 knn = new KNN_2();
         double accuracy = knn.crossValidation(w);
+        //Result result= knn.predict();
         System.out.println(accuracy);
     }
 }

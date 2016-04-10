@@ -17,9 +17,9 @@ public class KNN_2 {
     private static final String TESTPATH = "testProdIntro.binary.arff";
     private static int k = 3;
     private static final double[] DEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1, 1, 1 };
-    private List trainData = new ArrayList();
-    private List testData = new ArrayList();
-    private List shuffled = new ArrayList();
+    private List<ProdIntro> trainData = new ArrayList<ProdIntro>();
+    private List<ProdIntro> testData = new ArrayList<ProdIntro>();
+    private List<ProdIntro> shuffled = new ArrayList<ProdIntro>();
 
     ///////////////////////////////////////////////////////
     ////////////////// CONSTRUCTORS/////////////////////////
@@ -43,7 +43,6 @@ public class KNN_2 {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        int size = trainData.size();
         shuffled = cloneList(trainData);
         Collections.shuffle(shuffled);
     }
@@ -58,7 +57,7 @@ public class KNN_2 {
      * @return
      */
     public Result predict() {
-        return predict(TESTPATH);
+        return predict(TRAINPATH);
     }
 
     /**
@@ -158,7 +157,7 @@ public class KNN_2 {
         int size = trainData.size();
         if (fold > size)
             fold = size;
-        List shuffled = cloneList(trainData);
+        List<ProdIntro> shuffled = cloneList(trainData);
         Collections.shuffle(shuffled);
         int testSize = size / fold;
         int mod = size % fold;
@@ -168,17 +167,17 @@ public class KNN_2 {
         double err = 0;
         while (start < size) {
             int end = start + testSize + (cnt++ < mod ? 1 : 0);
-            List test = cloneList(shuffled.subList(start, Math.min(end, size)));
-            List train = cloneList(shuffled.subList(0, start));
+            List<ProdIntro> test = cloneList(shuffled.subList(start, Math.min(end, size)));
+            List<ProdIntro> train = cloneList(shuffled.subList(0, start));
             train.addAll(cloneList(shuffled.subList(end, size)));
             double currErr = validate(predict(train, test, w));
-            // System.out.println(
-            // String.format("Round %d: %.2f%%", num++, currErr * 100));
+//            System.out.println(
+//            String.format("Round %d: %.2f%%", num++, currErr * 100));
             err += currErr;
             start = end;
         }
-        // System.out.println(String.format("\nResult: %.2f%%", err/fold *
-        // 100));
+//        System.out.println(String.format("\nResult: %.2f%%", err/fold *
+//        100));
         return err / fold;
     }
 
@@ -232,7 +231,7 @@ public class KNN_2 {
      * @throws IOException
      */
     private void loadData(String path, boolean isTrain) throws IOException {
-        List result = new ArrayList();
+        List<ProdIntro> result = new ArrayList<ProdIntro>();
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
         while ((line = br.readLine()) != null) {
@@ -246,6 +245,7 @@ public class KNN_2 {
         } else {
             testData = result;
         }
+        br.close();
     }
 
     /**
@@ -260,14 +260,12 @@ public class KNN_2 {
      */
     private double calculateSim(ProdIntro p1, ProdIntro p2, double[] w) {
         double dist = 0;
-        int row;
-        int col;
-        dist += p1.getType().compartTo(p2.getType()) * w[0];
-        dist += p1.getCustomer().compartTo(p2.getCustomer()) * w[1];
+        dist += 1 / p1.getType().compartTo(p2.getType()) * w[0];
+        dist += 1 / p1.getCustomer().compartTo(p2.getCustomer()) * w[1];
         dist += Math.pow(p1.getNFee() - p2.getNFee(), 2) * w[2];
         dist += Math.pow(p1.getNBudget() - p2.getNBudget(), 2) * w[3];
-        dist += p1.getSize().compartTo(p2.getSize()) * w[4];
-        dist += p1.getPromotion().compartTo(p2.getPromotion()) * w[5];
+        dist += 1 / p1.getSize().compartTo(p2.getSize()) * w[4];
+        dist += 1 / p1.getPromotion().compartTo(p2.getPromotion()) * w[5];
         dist += Math.pow(p1.getNRate() - p2.getNRate(), 2) * w[6];
         dist += Math.pow(p1.getNPeriod() - p2.getNPeriod(), 2) * w[7];
         if (dist == 0) {
@@ -305,13 +303,13 @@ public class KNN_2 {
 
     // testing method, using all default settings.
     public static void main(String[] args) {
-        // default
-        KNN_2 test = new KNN_2();
-        // double[] weight = {0.002, 0.00, 0.006, 0.172, 0.013, 0.109};
-        double[] weight = { 1, 1, 1, 1, 1, 1, 1, 1 };
-        double result = test.crossValidation(weight);
-        // Result result = test.predict(TRAINPATH);
-        // test.validate(result);
-        // System.out.println(result.accuracy);
+//        // default
+//        KNN_2 test = new KNN_2();
+//        // double[] weight = {0.002, 0.00, 0.006, 0.172, 0.013, 0.109};
+//        double[] weight = { 1, 1, 1, 1, 1, 1, 1, 1 };
+//        double result = test.crossValidation(weight);
+//        // Result result = test.predict(TRAINPATH);
+//        // test.validate(result);
+//        // System.out.println(result.accuracy);
     }
 }
