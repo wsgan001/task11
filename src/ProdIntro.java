@@ -40,6 +40,7 @@ public class ProdIntro {
 
     public ProdIntro() {
     }
+
     public ProdIntro(ProdIntro from) {
         this.type = from.type;
         this.customer = from.customer;
@@ -86,40 +87,39 @@ public class ProdIntro {
         return fee;
     }
 
-    public double getNFee(){
+    public double getNFee() {
         return normalize(fee, fMin, fMax);
     }
 
     public double getBudget() {
         return budget;
     }
-    
-    public double getNBudget(){
+
+    public double getNBudget() {
         return normalize(budget, bMin, bMax);
     }
-    
+
     public Size getSize() {
         return size;
     }
-    
+
     public Promotion getPromotion() {
         return promotion;
     }
-
 
     public int getRate() {
         return rate;
     }
 
-    public double getNRate(){
+    public double getNRate() {
         return normalize(rate, rMin, rMax);
     }
-    
+
     public int getPeriod() {
         return period;
     }
-    
-    public double getNPeriod(){
+
+    public double getNPeriod() {
         return normalize(period, pMin, pMax);
     }
 
@@ -168,7 +168,7 @@ public class ProdIntro {
             break;
         }
     }
-    
+
     public void setSize(String key) {
         switch (key) {
         case "Small":
@@ -184,7 +184,7 @@ public class ProdIntro {
             break;
         }
     }
-    
+
     public void setPromotion(String key) {
         switch (key) {
         case "Web&Email":
@@ -219,29 +219,51 @@ public class ProdIntro {
     public void setPeriod(int period) {
         this.period = period;
     }
-    
+
     public void setLabel(int key) {
         this.label = key;
     }
-    
+
     enum Type {
         LOAN, BA, CD, MORT, FUND;
+        static double[][] sim = { { 1, 0, 0.1, 0.3, 0.2 }, { 0, 1, 0, 0, 0 },
+                { 0.1, 0, 1, 0.2, 0.2 }, { 0.3, 0, 0.2, 1, 0.1 },
+                { 0.2, 0, 0.2, 0.1, 1 } };
+        double compartTo(Type o) {
+            return sim[ordinal()][o.ordinal()];
+        }
     }
-    
+
     enum Customer {
         BUS, PRO, STU, DOC, OTH;
+        static double[][] sim = { { 1, 0.2, 0.1, 0.2, 0 }, { 0.2, 1, 0.2, 0.1, 0 },
+                { 0.1, 0.2, 1, 0.1, 0 }, { 0.2, 0.1, 0.1, 1, 0 },
+                { 0, 0, 0, 0, 1 } };
+        double compartTo(Customer o) {
+            return sim[ordinal()][o.ordinal()];
+        }
     }
 
     enum Size {
         SM, MD, LG;
+        static double[][] sim = { { 1, 0.1, 0 }, { 0.1, 1, 0.1 }, { 0, 0.1, 1 } };
+        double compartTo(Size o) {
+            return sim[ordinal()][o.ordinal()];
+        }
     }
-    
+
     enum Promotion {
         FULL, WEBEMAIL, WEB, NONE;
+        static double[][] sim = { { 1, 0.8, 0, 0 }, { 0.8, 1, 0.1, 0.5 },
+                { 0, 0.1, 1, 0.4 }, { 0, 0.5, 0.4, 1 } };
+        double compartTo(Promotion o) {
+            return sim[ordinal()][o.ordinal()];
+        }
     }
 
     /**
      * normalize given val using min and max.
+     * 
      * @param val
      * @param min
      * @param max
@@ -250,10 +272,8 @@ public class ProdIntro {
     private double normalize(double val, double min, double max) {
         return (val - min) / (max - min);
     }
-    
+
     private double normalize(int val, int min, int max) {
         return (val - min) / (max - min);
     }
 }
-
-
