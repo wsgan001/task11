@@ -42,8 +42,8 @@ public class KNN {
      */
     public KNN(Class obj, int k) {
         if (obj == ProdIntro.class) {
-            TRAINPATH = "/Users/linjiaruc/Documents/Java/BeginningJava/data mining/src/trainProdIntro.binary.arff";
-            TESTPATH = "/Users/linjiaruc/Documents/Java/BeginningJava/data mining/src/testProdIntro.binary.arff";
+            TRAINPATH = "/trainProdIntro.binary.arff";
+            TESTPATH = "/testProdIntro.binary.arff";
             introTrain = new ArrayList<ProdIntro>();
             introTest = new ArrayList<ProdIntro>();
             LABLENUM = 2;
@@ -57,8 +57,8 @@ public class KNN {
             Collections.shuffle(introShuffled);
         }
         if (obj == ProdSelection.class) {
-            TRAINPATH = "/Users/linjiaruc/Documents/Java/BeginningJava/data mining/src/trainProdSelection.arff";
-            TESTPATH = "/Users/linjiaruc/Documents/Java/BeginningJava/data mining/src/testProdSelection.arff";
+            TRAINPATH = "/trainProdSelection.arff";
+            TESTPATH = "/testProdSelection.arff";
             selectionTrain = new ArrayList<ProdSelection>();
             selectionTest = new ArrayList<ProdSelection>();
             LABLENUM = 5;
