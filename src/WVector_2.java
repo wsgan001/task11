@@ -6,7 +6,7 @@ import java.util.*;
 public class WVector_2 {
     //2.0, 4.0, 3.0, 43.0, 1.0, 1.0, 2.0, 32.0
     private static double[] w = {10, 10, 10, 10, 10, 10, 10, 10};
-    private static final int DROP = 5;
+    private static final int DROP = 10;
 
     public static void main(String[] args) {
 
