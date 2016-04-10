@@ -1,4 +1,3 @@
-package knn;
 import java.util.List;
 
 

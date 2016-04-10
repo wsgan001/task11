@@ -1,5 +1,3 @@
-package knn;
-
 import java.util.List;
 
 public class Result {

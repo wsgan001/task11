@@ -1,4 +1,3 @@
-package knn;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -42,8 +41,8 @@ public class KNN {
      */
     public KNN(Class obj, int k) {
         if (obj == ProdIntro.class) {
-            TRAINPATH = "/trainProdIntro.binary.arff";
-            TESTPATH = "/testProdIntro.binary.arff";
+            TRAINPATH = "trainProdIntro.binary.arff";
+            TESTPATH = "testProdIntro.binary.arff";
             introTrain = new ArrayList<ProdIntro>();
             introTest = new ArrayList<ProdIntro>();
             LABLENUM = 2;
@@ -57,8 +56,8 @@ public class KNN {
             Collections.shuffle(introShuffled);
         }
         if (obj == ProdSelection.class) {
-            TRAINPATH = "/trainProdSelection.arff";
-            TESTPATH = "/testProdSelection.arff";
+            TRAINPATH = "trainProdSelection.arff";
+            TESTPATH = "testProdSelection.arff";
             selectionTrain = new ArrayList<ProdSelection>();
             selectionTest = new ArrayList<ProdSelection>();
             LABLENUM = 5;
@@ -71,7 +70,7 @@ public class KNN {
             selectionShuffled = cloneSelectionList(selectionTrain);
             Collections.shuffle(selectionShuffled);
         }
-        KNN.k = k;
+        this.k = k;
     }
     ///////////////////////////////////////////////////////
     ////////////////// Public Functions////////////////////
@@ -125,6 +124,95 @@ public class KNN {
             KNN knn_ProdSelection = new KNN(ProdSelection.class);
             return knn_ProdSelection.crossValidation(fold, w);
         }
+    }
+    /**
+     * Validate the predict accuracy using result object
+     *
+     * @param result
+     */
+
+    public double crossValidation(int fold) {
+        if (LABLENUM == 2) {
+            return crossValidation(fold, IntroDEFAULTWEIGHT);
+        } else {
+            return crossValidation(fold, SelectionDEFAULTWEIGHT);
+        }
+    }
+    /**
+     * Take a weight vecotr and conduct 10 fold validation, return an average
+     * accuracy.
+     *
+     * @param w
+     *            weight vector, size = 6
+     * @return average accuracy
+     */
+    public double crossValidation(double[] w) {
+        return crossValidation(10, w);
+    }
+    /**
+     * Conduct x fold cross validation with weight w
+     *
+     * @param fold
+     * @param w
+     * @return
+     */
+    public double crossValidation(int fold, double[] w) {
+        // try {
+        // loadData(TRAINPATH, true);
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        // }
+        double err = 0;
+        if (LABLENUM == 2) {
+            int size = introTrain.size();
+            if (fold > size)
+                fold = size;
+            List<ProdIntro> shuffled = introShuffled;
+            int testSize = size / fold;
+            int mod = size % fold;
+            int cnt = 0;
+            int num = 1;
+            int start = 0;
+
+            while (start < size) {
+                int end = start + testSize + (cnt++ < mod ? 1 : 0);
+                List<ProdIntro> test = cloneIntroList(shuffled.subList(start, Math.min(end, size)));
+                List<ProdIntro> train = cloneIntroList(shuffled.subList(0, start));
+                train.addAll(cloneIntroList(shuffled.subList(end, size)));
+                double currErr = validate(introPredict(train, test, w));
+//                System.out.println(
+//                String.format("Round %d: %.2f%%", num++, currErr * 100));
+                err += currErr;
+                start = end;
+            }
+//            System.out.println(String.format("\nResult: %.2f%%", err/fold *
+//            100));
+        }
+        if (LABLENUM == 5) {
+            int size = selectionTrain.size();
+            if (fold > size)
+                fold = size;
+            List<ProdSelection> shuffled = selectionShuffled;
+            int testSize = size / fold;
+            int mod = size % fold;
+            int cnt = 0;
+            int num = 1;
+            int start = 0;
+            while (start < size) {
+                int end = start + testSize + (cnt++ < mod ? 1 : 0);
+                List<ProdSelection> test = cloneSelectionList(shuffled.subList(start, Math.min(end, size)));
+                List<ProdSelection> train = cloneSelectionList(shuffled.subList(0, start));
+                train.addAll(cloneSelectionList(shuffled.subList(end, size)));
+                double currErr = validate(selectionPredict(train, test, w));
+//                System.out.println(
+//                String.format("Round %d: %.2f%%", num++, currErr * 100));
+                err += currErr;
+                start = end;
+            }
+//            System.out.println(String.format("\nResult: %.2f%%", err/fold *
+//            100));
+        }
+        return err / fold;
     }
     ///////////////////////////////////////////////////////
     ////////////////// PRIVATE FUNCTIONS///////////////////
@@ -244,97 +332,6 @@ public class KNN {
         result.selectionTestSet = test;
         result.resultSet = resultSet;
         return result;
-    }
-    /**
-     * Validate the predict accuracy using result object
-     *
-     * @param result
-     */
- 
-    private double crossValidation(int fold) {
-        if (LABLENUM == 2) {
-            return crossValidation(fold, IntroDEFAULTWEIGHT);
-        } else {
-            return crossValidation(fold, SelectionDEFAULTWEIGHT);
-        }
-    }
-    /**
-     * Take a weight vecotr and conduct 10 fold validation, return an average
-     * accuracy.
-     *
-     * @param w
-     *            weight vector, size = 6
-     * @return average accuracy
-     */
-    private double crossValidation(double[] w) {
-        return crossValidation(10, w);
-    }
-    /**
-     * Conduct x fold cross validation with weight w
-     * 
-     * @param fold
-     * @param w
-     * @return
-     */
-    private double crossValidation(int fold, double[] w) {
-        // try {
-        // loadData(TRAINPATH, true);
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
-        double err = 0;
-        if (LABLENUM == 2) {
-            int size = introTrain.size();
-            if (fold > size)
-                fold = size;
-            List<ProdIntro> shuffled = cloneIntroList(introTrain);
-            Collections.shuffle(shuffled);
-            int testSize = size / fold;
-            int mod = size % fold;
-            int cnt = 0;
-            int num = 1;
-            int start = 0;
-            
-            while (start < size) {
-                int end = start + testSize + (cnt++ < mod ? 1 : 0);
-                List<ProdIntro> test = cloneIntroList(shuffled.subList(start, Math.min(end, size)));
-                List<ProdIntro> train = cloneIntroList(shuffled.subList(0, start));
-                train.addAll(cloneIntroList(shuffled.subList(end, size)));
-                double currErr = validate(introPredict(train, test, w));
-//                System.out.println(
-//                String.format("Round %d: %.2f%%", num++, currErr * 100));
-                err += currErr;
-                start = end;
-            }
-//            System.out.println(String.format("\nResult: %.2f%%", err/fold *
-//            100));
-        }
-        if (LABLENUM == 5) {
-            int size = selectionTrain.size();
-            if (fold > size)
-                fold = size;
-            List<ProdSelection> shuffled = cloneSelectionList(selectionTrain);
-            Collections.shuffle(shuffled);
-            int testSize = size / fold;
-            int mod = size % fold;
-            int cnt = 0;
-            int num = 1;
-            int start = 0;
-            while (start < size) {
-                int end = start + testSize + (cnt++ < mod ? 1 : 0);
-                List<ProdSelection> test = cloneSelectionList(shuffled.subList(start, Math.min(end, size)));
-                List<ProdSelection> train = cloneSelectionList(shuffled.subList(0, start));
-                train.addAll(cloneSelectionList(shuffled.subList(end, size)));
-                double currErr = validate(selectionPredict(train, test, w));
-//                System.out.println(
-//                String.format("Round %d: %.2f%%", num++, currErr * 100));
-                err += currErr;
-                start = end;
-            }
-//            System.out.println(String.format("\nResult: %.2f%%", err/fold *
-//            100));
-        }
-        return err / fold;
     }
 
     /**
