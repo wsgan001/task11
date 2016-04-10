@@ -12,7 +12,7 @@ import java.util.PriorityQueue;
  * @since Mar 28, 2016
  */
 public class KNN_combined {
-    private static final int LABLENUM = 2;
+    private static final int LABLENUM = 5;
     private static String TRAINPATH;
     private static String TESTPATH;
     private static List<ProdSelection> selectionTrain;
@@ -22,7 +22,6 @@ public class KNN_combined {
     private static List<ProdSelection> selectionShuffled;
     private static List<ProdIntro> introShuffled;
     private static int k = 3;
-    private static final double[] DEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1, 1, 1 };
    
     ///////////////////////////////////////////////////////
     ////////////////// CONSTRUCTORS/////////////////////////
@@ -67,21 +66,12 @@ public class KNN_combined {
             selectionShuffled = cloneSelectionList(selectionTrain);
             Collections.shuffle(selectionShuffled);
         }
-        KNN_combined.k = k;
+        this.k = k;
     }
 
     ///////////////////////////////////////////////////////
     ////////////////// Public Functions////////////////////
     ///////////////////////////////////////////////////////
-
-    /**
-     * Predict using default testing set path
-     *
-     * @return
-     */
-    public Result predict() {
-        return predict(TRAINPATH);
-    }
 
     /**
      * Use default weight and training set to predict the given test set
@@ -90,16 +80,16 @@ public class KNN_combined {
      *            test set file path
      * @return
      */
-    public Result predict(String path) {
+    public Result predict(String path, double[] weight) {
         try {
             // load test data
             loadData(path, false);
             loadData(TRAINPATH, true);
             if (TRAINPATH == "trainProdIntro.binary.arff") {
-                return introPredict(introTrain, introTest, DEFAULTWEIGHT);
+                return introPredict(introTrain, introTest, weight);
             }
             if (TRAINPATH == "trainProdSelection.arff") {
-                return selectionPredict(selectionTrain, selectionTest, DEFAULTWEIGHT);
+                return selectionPredict(selectionTrain, selectionTest, weight);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -191,10 +181,6 @@ public class KNN_combined {
         }
         result.accuracy = hit / result.resultSet.size();
         return result.accuracy;
-    }
-
-    public double crossValidation(int fold) {
-        return crossValidation(fold, DEFAULTWEIGHT);
     }
 
     /**
@@ -460,12 +446,22 @@ public class KNN_combined {
     // testing method, using all default settings.
     public static void main(String[] args) {
 //        // default
-//        KNN_2 test = new KNN_2();
-//        // double[] weight = {0.002, 0.00, 0.006, 0.172, 0.013, 0.109};
-//        double[] weight = { 1, 1, 1, 1, 1, 1, 1, 1 };
-//        double result = test.crossValidation(weight);
-//        // Result result = test.predict(TRAINPATH);
+        KNN_combined knn = new KNN_combined(ProdIntro.class, 3);
+        double[] weight = {12.0, 11.0, 18.0, 64.0, 3.0, 1.0, 2.0, 28.0};
+        Result result = knn.predict(TESTPATH, weight);
 //        // test.validate(result);
-//        // System.out.println(result.accuracy);
+        System.out.println(result.accuracy);
+        for(Integer i : result.resultSet) {
+            System.out.println(i);
+        }
+
+        KNN_combined knn_2 = new KNN_combined(ProdSelection.class, 3);
+        double[] weight_2 = {12.0, 11.0, 18.0, 64.0, 3.0, 1.0};
+        result = knn_2.predict(TESTPATH, weight_2);
+//        // test.validate(result);
+        System.out.println(result.accuracy);
+        for(Integer i : result.resultSet) {
+            System.out.println(i);
+        }
     }
 }

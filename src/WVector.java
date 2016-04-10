@@ -3,22 +3,22 @@ import java.util.*;
 /**
  * Created by liuyuan on 4/3/16.
  */
-public class WVector_2 {
-    private static double[] w = {10, 10, 10, 10, 10, 10, 10, 10};
-    private static final int DROP = 5;
+public class WVector {
+    private static double[] w = {1, 1, 1, 1, 1, 1};
+    private static final int DROP = 10;
 
     public static void main(String[] args) {
 
-        double[] wOld  = new double[8];
+        double[] wOld  = new double[6];
 
-        System.arraycopy(w, 0, wOld, 0, 8);
+        System.arraycopy(w, 0, wOld, 0, 6);
 
         while (true) {
 
-            double[] bestW = new double[8];
+            double[] bestW = new double[6];
             double bestAccuracy = 0;
 
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 5; i++) {
                 double[] wTemp = optimize(w);
                 double accuracy = validate(wTemp, wOld);
                 if (accuracy != 0) {
@@ -31,12 +31,13 @@ public class WVector_2 {
 
             if (bestAccuracy != 0) {
                 w = bestW;
-                System.arraycopy(w, 0, wOld, 0, 8);
+                System.arraycopy(w, 0, wOld, 0, 6);
             } else {
                 break;
             }
         }
     }
+    // 0.0116, 0, 0.0349, 1, 0.0756, 0.6337
 
     public static boolean hasFinished (ArrayList<Double> list) {
         if (list.size() < DROP ) {
@@ -54,7 +55,7 @@ public class WVector_2 {
         int winCount = 0;
         double accuracy = 0;
         for (int i = 0; i < 100; i++) {
-            KNN_combined knn = new KNN_combined(ProdIntro.class, 3);
+            KNN_combined knn = new KNN_combined(ProdSelection.class, 3);
             double scoreNew = knn.crossValidation(wNew);
             accuracy += scoreNew;
             // System.out.println("New score: " + scoreNew);
@@ -75,18 +76,20 @@ public class WVector_2 {
     }
 
     private static double[] optimize (double[] w) {
-        KNN_combined knn = new KNN_combined(ProdIntro.class, 3);
+        KNN_combined knn = new KNN_combined(ProdSelection.class, 3);
 
-        double[] wTemp  = new double[8];
-        System.arraycopy(w, 0, wTemp, 0, 8);
+        double[] wTemp  = new double[6];
+        System.arraycopy(w, 0, wTemp, 0, 6);
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 6; i++) {
             WeightAndAccuracy optimal = null;
             double j = 0;
             ArrayList<Double> list = new ArrayList<>();
             while (!hasFinished(list)) {
                 wTemp[i] = j;
                 double accuracy = knn.crossValidation(wTemp);
+                System.out.println(accuracy);
+                System.out.println(Arrays.toString(wTemp));
                 if (optimal == null) {
                     optimal = new WeightAndAccuracy(j, accuracy);
                 } else {

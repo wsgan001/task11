@@ -104,7 +104,7 @@ public class KNN_2 {
             }
             resultSet.add(findWinner(queue));
         }
-        result.testSet = test;
+        result.introTestSet = test;
         result.resultSet = resultSet;
         return result;
     }
@@ -116,8 +116,8 @@ public class KNN_2 {
      */
     public double validate(Result result) {
         double hit = 0;
-        for (int i = 0; i < result.testSet.size(); i++) {
-            if (result.testSet.get(i).getLabel() == result.resultSet.get(i)) {
+        for (int i = 0; i < result.introTestSet.size(); i++) {
+            if (result.introTestSet.get(i).getLabel() == result.resultSet.get(i)) {
                 hit++;
             }
         }
