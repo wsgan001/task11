@@ -57,7 +57,6 @@ public class KNN_combined {
             TESTPATH = "testProdSelection.arff";
             selectionTrain = new ArrayList<ProdSelection>();
             selectionTest = new ArrayList<ProdSelection>();
-            selectionShuffled = new ArrayList<ProdSelection>();
             try {
                 loadData(TRAINPATH, true);
             } catch (IOException e) {
