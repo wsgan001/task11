@@ -229,8 +229,13 @@ public class ProdIntro {
         static double[][] sim = { { 1, 0, 0.1, 0.3, 0.2 }, { 0, 1, 0, 0, 0 },
                 { 0.1, 0, 1, 0.2, 0.2 }, { 0.3, 0, 0.2, 1, 0.1 },
                 { 0.2, 0, 0.2, 0.1, 1 } };
+        /**
+         * compare the distance between two Type
+         * @param o
+         * @return
+         */
         double compartTo(Type o) {
-            return sim[ordinal()][o.ordinal()];
+            return 1 / sim[ordinal()][o.ordinal()];
         }
     }
 
@@ -239,16 +244,26 @@ public class ProdIntro {
         static double[][] sim = { { 1, 0.2, 0.1, 0.2, 0 }, { 0.2, 1, 0.2, 0.1, 0 },
                 { 0.1, 0.2, 1, 0.1, 0 }, { 0.2, 0.1, 0.1, 1, 0 },
                 { 0, 0, 0, 0, 1 } };
+        /**
+         * compare the distance between two Customer
+         * @param o
+         * @return
+         */
         double compartTo(Customer o) {
-            return sim[ordinal()][o.ordinal()];
+            return 1 / sim[ordinal()][o.ordinal()];
         }
     }
 
     enum Size {
         SM, MD, LG;
         static double[][] sim = { { 1, 0.1, 0 }, { 0.1, 1, 0.1 }, { 0, 0.1, 1 } };
+        /**
+         * compare the distance between two Size
+         * @param o
+         * @return
+         */
         double compartTo(Size o) {
-            return sim[ordinal()][o.ordinal()];
+            return 1 / sim[ordinal()][o.ordinal()];
         }
     }
 
@@ -256,8 +271,13 @@ public class ProdIntro {
         FULL, WEBEMAIL, WEB, NONE;
         static double[][] sim = { { 1, 0.8, 0, 0 }, { 0.8, 1, 0.1, 0.5 },
                 { 0, 0.1, 1, 0.4 }, { 0, 0.5, 0.4, 1 } };
+        /**
+         * compare the distance between two Promotion
+         * @param o
+         * @return
+         */
         double compartTo(Promotion o) {
-            return sim[ordinal()][o.ordinal()];
+            return 1 / sim[ordinal()][o.ordinal()];
         }
     }
 
@@ -273,7 +293,4 @@ public class ProdIntro {
         return (val - min) / (max - min);
     }
 
-    private double normalize(int val, int min, int max) {
-        return (val - min) / (max - min);
-    }
 }

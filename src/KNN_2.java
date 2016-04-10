@@ -260,12 +260,12 @@ public class KNN_2 {
      */
     private double calculateSim(ProdIntro p1, ProdIntro p2, double[] w) {
         double dist = 0;
-        dist += 1 / p1.getType().compartTo(p2.getType()) * w[0];
-        dist += 1 / p1.getCustomer().compartTo(p2.getCustomer()) * w[1];
+        dist += p1.getType().compartTo(p2.getType()) * w[0];
+        dist += p1.getCustomer().compartTo(p2.getCustomer()) * w[1];
         dist += Math.pow(p1.getNFee() - p2.getNFee(), 2) * w[2];
         dist += Math.pow(p1.getNBudget() - p2.getNBudget(), 2) * w[3];
-        dist += 1 / p1.getSize().compartTo(p2.getSize()) * w[4];
-        dist += 1 / p1.getPromotion().compartTo(p2.getPromotion()) * w[5];
+        dist += p1.getSize().compartTo(p2.getSize()) * w[4];
+        dist += p1.getPromotion().compartTo(p2.getPromotion()) * w[5];
         dist += Math.pow(p1.getNRate() - p2.getNRate(), 2) * w[6];
         dist += Math.pow(p1.getNPeriod() - p2.getNPeriod(), 2) * w[7];
         if (dist == 0) {
