@@ -54,7 +54,7 @@ public class WVector_2 {
         int winCount = 0;
         double accuracy = 0;
         for (int i = 0; i < 100; i++) {
-            KNN_2 knn = new KNN_2();
+            KNN_combined knn = new KNN_combined();
             double scoreNew = knn.crossValidation(wNew);
             accuracy += scoreNew;
             // System.out.println("New score: " + scoreNew);
@@ -75,7 +75,7 @@ public class WVector_2 {
     }
 
     private static double[] optimize (double[] w) {
-        KNN_2 knn = new KNN_2();
+        KNN_combined knn = new KNN_combined();
 
         double[] wTemp  = new double[8];
         System.arraycopy(w, 0, wTemp, 0, 8);
