@@ -47,8 +47,8 @@ public class KNN {
      */
     public KNN(Class obj, int k) {
         if (obj == ProdIntro.class) {
-            TRAINPATH = "/trainProdIntro.binary.arff";
-            TESTPATH = "/testProdIntro.binary.arff";
+            TRAINPATH = "trainProdIntro.binary.arff";
+            TESTPATH = "testProdIntro.binary.arff";
             introTrain = new ArrayList<ProdIntro>();
             introTest = new ArrayList<ProdIntro>();
             LABLENUM = 2;
@@ -63,8 +63,8 @@ public class KNN {
             Collections.shuffle(introShuffled);
         }
         if (obj == ProdSelection.class) {
-            TRAINPATH = "/trainProdSelection.arff";
-            TESTPATH = "/testProdSelection.arff";
+            TRAINPATH = "trainProdSelection.arff";
+            TESTPATH = "testProdSelection.arff";
             selectionTrain = new ArrayList<ProdSelection>();
             selectionTest = new ArrayList<ProdSelection>();
             LABLENUM = 5;
@@ -77,8 +77,8 @@ public class KNN {
             selectionShuffled = cloneSelectionList(selectionTrain);
             Collections.shuffle(selectionShuffled);
         } if (obj == ProdIntroReal.class) {
-            TRAINPATH = "/trainProdIntro.real.arff";
-            TESTPATH = "/testProdIntro.real.arff";
+            TRAINPATH = "trainProdIntro.real.arff";
+            TESTPATH = "testProdIntro.real.arff";
             realTrain = new ArrayList<ProdIntroReal>();
             realTest = new ArrayList<ProdIntroReal>();
             LABLENUM = 1;
