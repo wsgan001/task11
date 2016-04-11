@@ -7,7 +7,9 @@ public class Main {
         String test = "testProdIntro.binary.arff";
         String train2 = "trainProdSelection.arff";
         String test2 = "testProdSelection.arff";
-        
+        String train3 = "trainProdIntro.real.arff";
+        String test3 = "testProdIntro.real.arff";
+     
         DecimalFormat df = new DecimalFormat("###.00");
         
         
@@ -27,7 +29,9 @@ public class Main {
         System.out.println(df.format(KNN.validate(KNN.predict(train, test)) * 100) +"%");
         System.out.println("The prediction for ProdSelection test data is ");
         System.out.println(df.format(KNN.validate(KNN.predict(train2, test2)) * 100) +"%");
-        
+        System.out.println("The prediction for Revenue for test data is: ");
+        KNN.predict(train3, test3);
+
         
     }
 
