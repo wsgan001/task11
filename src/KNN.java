@@ -1,4 +1,4 @@
-package knn;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -316,7 +316,7 @@ public class KNN {
      *            weight vector, size = 6
      * @return average accuracy
      */
-    private double crossValidation(double[] w) {
+    public double crossValidation(double[] w) {
         return crossValidation(10, w);
     }
     /**
