@@ -1,4 +1,3 @@
-package knn;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -150,6 +149,17 @@ public class KNN {
             KNN knn_ProdSelection = new KNN(ProdSelection.class);
             return knn_ProdSelection.crossValidation(fold, w);
         }
+    }
+    /**
+     * Take a weight vecotr and conduct 10 fold validation, return an average
+     * accuracy.
+     *
+     * @param w
+     *            weight vector, size = 6
+     * @return average accuracy
+     */
+    public double crossValidation(double[] w) {
+        return crossValidation(10, w);
     }
     ///////////////////////////////////////////////////////
     ////////////////// PRIVATE FUNCTIONS///////////////////
@@ -308,17 +318,7 @@ public class KNN {
             return crossValidation(fold, SelectionDEFAULTWEIGHT);
         }
     }
-    /**
-     * Take a weight vecotr and conduct 10 fold validation, return an average
-     * accuracy.
-     *
-     * @param w
-     *            weight vector, size = 6
-     * @return average accuracy
-     */
-    private double crossValidation(double[] w) {
-        return crossValidation(10, w);
-    }
+
     /**
      * Conduct x fold cross validation with weight w
      * 
