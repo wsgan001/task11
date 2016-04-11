@@ -1,3 +1,4 @@
+package knn;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -46,11 +47,12 @@ public class KNN {
      */
     public KNN(Class obj, int k) {
         if (obj == ProdIntro.class) {
-            TRAINPATH = "trainProdIntro.binary.arff";
-            TESTPATH = "testProdIntro.binary.arff";
+            TRAINPATH = "/trainProdIntro.binary.arff";
+            TESTPATH = "/testProdIntro.binary.arff";
             introTrain = new ArrayList<ProdIntro>();
             introTest = new ArrayList<ProdIntro>();
             LABLENUM = 2;
+            k=5;
             introShuffled = new ArrayList<ProdIntro>();
             try {
                 loadData(TRAINPATH, true);
@@ -61,8 +63,8 @@ public class KNN {
             Collections.shuffle(introShuffled);
         }
         if (obj == ProdSelection.class) {
-            TRAINPATH = "trainProdSelection.arff";
-            TESTPATH = "testProdSelection.arff";
+            TRAINPATH = "/trainProdSelection.arff";
+            TESTPATH = "/testProdSelection.arff";
             selectionTrain = new ArrayList<ProdSelection>();
             selectionTest = new ArrayList<ProdSelection>();
             LABLENUM = 5;
@@ -74,8 +76,23 @@ public class KNN {
             }
             selectionShuffled = cloneSelectionList(selectionTrain);
             Collections.shuffle(selectionShuffled);
+        } if (obj == ProdIntroReal.class) {
+            TRAINPATH = "/trainProdIntro.real.arff";
+            TESTPATH = "/testProdIntro.real.arff";
+            realTrain = new ArrayList<ProdIntroReal>();
+            realTest = new ArrayList<ProdIntroReal>();
+            LABLENUM = 1;
+            k=5;
+            realShuffled = new ArrayList<ProdIntroReal>();
+            try {
+                loadData(TRAINPATH, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            realShuffled = cloneRealList(realTrain);
+            Collections.shuffle(realShuffled);
         }
-        this.k = k;
+        KNN.k = k;
     }
     ///////////////////////////////////////////////////////
     ////////////////// Public Functions////////////////////
@@ -84,6 +101,9 @@ public class KNN {
         if (trainPath.contains("binary")) {
             KNN knn_ProdIntro = new KNN(ProdIntro.class);
             return knn_ProdIntro.predict_path(trainPath, testPath);
+        } if (trainPath.contains("real")) {
+            KNN knn_ProdIntroreal = new KNN(ProdIntroReal.class);
+            return knn_ProdIntroreal.predict_path(trainPath, testPath);
         } else {
             KNN knn_Selection = new KNN(ProdSelection.class);
             return knn_Selection.predict_path(trainPath, testPath);
@@ -93,23 +113,24 @@ public class KNN {
         double hit = 0;
         if (LABLENUM == 2) {
             for (int i = 0; i < result.introTestSet.size(); i++) {
-         //       System.out.println(result.introTestSet.get(i).getLabel()+ " " + result.resultSet.get(i));
                 if (result.introTestSet.get(i).getLabel() == result.resultSet.get(i)) {
                     hit++;
                 }
             }
-        }
-        if (LABLENUM == 5) {
+          //  result.accuracy = hit / result.resultSet.size();
+        } else if (LABLENUM == 5) {
             for (int i = 0; i < result.selectionTestSet.size(); i++) {
                 
                 if (result.selectionTestSet.get(i).getLabel() == result.resultSet.get(i)) {
                     hit++;
                 }
             }
+         //  result.accuracy = hit / result.resultSet.size();
         }
         result.accuracy = hit / result.resultSet.size();
         return result.accuracy;
     }
+    
     
 
     public static double crossvalidation(String TrainPath, int fold) {
@@ -129,95 +150,6 @@ public class KNN {
             KNN knn_ProdSelection = new KNN(ProdSelection.class);
             return knn_ProdSelection.crossValidation(fold, w);
         }
-    }
-    /**
-     * Validate the predict accuracy using result object
-     *
-     * @param result
-     */
-
-    public double crossValidation(int fold) {
-        if (LABLENUM == 2) {
-            return crossValidation(fold, IntroDEFAULTWEIGHT);
-        } else {
-            return crossValidation(fold, SelectionDEFAULTWEIGHT);
-        }
-    }
-    /**
-     * Take a weight vecotr and conduct 10 fold validation, return an average
-     * accuracy.
-     *
-     * @param w
-     *            weight vector, size = 6
-     * @return average accuracy
-     */
-    public double crossValidation(double[] w) {
-        return crossValidation(10, w);
-    }
-    /**
-     * Conduct x fold cross validation with weight w
-     *
-     * @param fold
-     * @param w
-     * @return
-     */
-    public double crossValidation(int fold, double[] w) {
-        // try {
-        // loadData(TRAINPATH, true);
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
-        double err = 0;
-        if (LABLENUM == 2) {
-            int size = introTrain.size();
-            if (fold > size)
-                fold = size;
-            List<ProdIntro> shuffled = introShuffled;
-            int testSize = size / fold;
-            int mod = size % fold;
-            int cnt = 0;
-            int num = 1;
-            int start = 0;
-
-            while (start < size) {
-                int end = start + testSize + (cnt++ < mod ? 1 : 0);
-                List<ProdIntro> test = cloneIntroList(shuffled.subList(start, Math.min(end, size)));
-                List<ProdIntro> train = cloneIntroList(shuffled.subList(0, start));
-                train.addAll(cloneIntroList(shuffled.subList(end, size)));
-                double currErr = validate(introPredict(train, test, w));
-//                System.out.println(
-//                String.format("Round %d: %.2f%%", num++, currErr * 100));
-                err += currErr;
-                start = end;
-            }
-//            System.out.println(String.format("\nResult: %.2f%%", err/fold *
-//            100));
-        }
-        if (LABLENUM == 5) {
-            int size = selectionTrain.size();
-            if (fold > size)
-                fold = size;
-            List<ProdSelection> shuffled = selectionShuffled;
-            int testSize = size / fold;
-            int mod = size % fold;
-            int cnt = 0;
-            int num = 1;
-            int start = 0;
-            while (start < size) {
-                int end = start + testSize + (cnt++ < mod ? 1 : 0);
-                List<ProdSelection> test = cloneSelectionList(shuffled.subList(start, Math.min(end, size)));
-                List<ProdSelection> train = cloneSelectionList(shuffled.subList(0, start));
-                train.addAll(cloneSelectionList(shuffled.subList(end, size)));
-                double currErr = validate(selectionPredict(train, test, w));
-//                System.out.println(
-//                String.format("Round %d: %.2f%%", num++, currErr * 100));
-                err += currErr;
-                start = end;
-            }
-//            System.out.println(String.format("\nResult: %.2f%%", err/fold *
-//            100));
-        }
-        return err / fold;
     }
     ///////////////////////////////////////////////////////
     ////////////////// PRIVATE FUNCTIONS///////////////////
@@ -247,12 +179,13 @@ public class KNN {
             }
             if (LABLENUM == 5) {
                 return selectionPredict(selectionTrain, selectionTest, SelectionDEFAULTWEIGHT);
+            } else {
+                return realPredict(realTrain, realTest, IntroDEFAULTWEIGHT);
             }
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
-        return null;
     }
     /**
      *
@@ -272,12 +205,13 @@ public class KNN {
             }
             if (LABLENUM == 5) {
                 return selectionPredict(selectionTrain, selectionTest, SelectionDEFAULTWEIGHT);
+            } else {
+                return realPredict(realTrain, realTest, realDEFAULTWEIGHT);
             }
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
-        return null;
     }
     /**
      * Predict the test result using ProdIntro training set and weight
@@ -308,7 +242,30 @@ public class KNN {
         result.resultSet = resultSet;
         return result;
     }
-    
+    private Result realPredict(List<ProdIntroReal> train, List<ProdIntroReal> test,
+            double[] w) {
+        Result result = new Result();
+        List<Double> resultSet = new ArrayList<>();
+        // for each element in test
+        for (ProdIntroReal te : test) {
+            // for each element in train
+            PriorityQueue<SimforReal> queue = new PriorityQueue<>();
+            for (ProdIntroReal tr : train) {
+                // calculate the similarity of te and tr
+                queue.offer(new SimforReal(calculateIntroSim(te, tr, w), tr.getRevenue()));
+            }
+            resultSet.add(findWinnerReal(queue));
+            
+        }
+        for (int i = 0; i< resultSet.size(); i++) {
+            System.out.printf("The " + (i+1) + "th test data's revenue is: ");
+            System.out.printf("%.2f",resultSet.get(i));
+            System.out.println();
+        }
+        result.introRealTestSet = test;
+        result.resultRealSet = resultSet;
+        return result;
+    }
     /**
      * Predict the test result using ProdSelection training set and weight
      *
@@ -338,6 +295,97 @@ public class KNN {
         result.resultSet = resultSet;
         return result;
     }
+    /**
+     * Validate the predict accuracy using result object
+     *
+     * @param result
+     */
+ 
+    private double crossValidation(int fold) {
+        if (LABLENUM == 2) {
+            return crossValidation(fold, IntroDEFAULTWEIGHT);
+        } else {
+            return crossValidation(fold, SelectionDEFAULTWEIGHT);
+        }
+    }
+    /**
+     * Take a weight vecotr and conduct 10 fold validation, return an average
+     * accuracy.
+     *
+     * @param w
+     *            weight vector, size = 6
+     * @return average accuracy
+     */
+    private double crossValidation(double[] w) {
+        return crossValidation(10, w);
+    }
+    /**
+     * Conduct x fold cross validation with weight w
+     * 
+     * @param fold
+     * @param w
+     * @return
+     */
+    private double crossValidation(int fold, double[] w) {
+        // try {
+        // loadData(TRAINPATH, true);
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        // }
+        double err = 0;
+        if (LABLENUM == 2) {
+            int size = introTrain.size();
+            if (fold > size)
+                fold = size;
+            List<ProdIntro> shuffled = cloneIntroList(introTrain);
+            Collections.shuffle(shuffled);
+            int testSize = size / fold;
+            int mod = size % fold;
+            int cnt = 0;
+            int num = 1;
+            int start = 0;
+            
+            while (start < size) {
+                int end = start + testSize + (cnt++ < mod ? 1 : 0);
+                List<ProdIntro> test = cloneIntroList(shuffled.subList(start, Math.min(end, size)));
+                List<ProdIntro> train = cloneIntroList(shuffled.subList(0, start));
+                train.addAll(cloneIntroList(shuffled.subList(end, size)));
+                double currErr = validate(introPredict(train, test, w));
+//                System.out.println(
+//                String.format("Round %d: %.2f%%", num++, currErr * 100));
+                err += currErr;
+                start = end;
+            }
+//            System.out.println(String.format("\nResult: %.2f%%", err/fold *
+//            100));
+        }
+        if (LABLENUM == 5) {
+            int size = selectionTrain.size();
+            if (fold > size)
+                fold = size;
+            List<ProdSelection> shuffled = cloneSelectionList(selectionTrain);
+            Collections.shuffle(shuffled);
+            int testSize = size / fold;
+            int mod = size % fold;
+            int cnt = 0;
+            int num = 1;
+            int start = 0;
+            while (start < size) {
+                int end = start + testSize + (cnt++ < mod ? 1 : 0);
+                List<ProdSelection> test = cloneSelectionList(shuffled.subList(start, Math.min(end, size)));
+                List<ProdSelection> train = cloneSelectionList(shuffled.subList(0, start));
+                train.addAll(cloneSelectionList(shuffled.subList(end, size)));
+                double currErr = validate(selectionPredict(train, test, w));
+//                System.out.println(
+//                String.format("Round %d: %.2f%%", num++, currErr * 100));
+                err += currErr;
+                start = end;
+            }
+//            System.out.println(String.format("\nResult: %.2f%%", err/fold *
+//            100));
+        }
+        return err / fold;
+    }
 
     /**
      * assign a label for given candidate queue.
@@ -361,7 +409,24 @@ public class KNN {
         }
         return winner;
     }
-
+    private double findWinnerReal(PriorityQueue<SimforReal> queue) {
+        // find the winner
+        double winner = 0;
+        int j = 0;
+        while (j < k) {
+            double curr = queue.poll().revenue;
+            winner += curr;
+            j++;
+        }
+        return winner/j;
+    }
+    private List<ProdIntroReal> cloneRealList(List<ProdIntroReal> list) {
+        List<ProdIntroReal> newList = new ArrayList<>();
+        for (ProdIntroReal p : list) {
+            newList.add(new ProdIntroReal(p));
+        }
+        return newList;
+    }
     /**
      * deep copy a List of ProdSelection.
      * 
@@ -375,7 +440,6 @@ public class KNN {
         }
         return newList;
     }
-    
     /**
      * deep copy a List of ProdIntro.
      * 
@@ -389,7 +453,12 @@ public class KNN {
         }
         return newList;
     }
-
+    /**
+     * deep copy a List of ProdIntroReal.
+     * 
+     * @param list
+     * @return
+     */
     /**
      * Load training set / testing set
      *
@@ -433,6 +502,22 @@ public class KNN {
                 selectionTest = result;
             }
             br.close();
+        } else {
+            List<ProdIntroReal> result = new ArrayList<ProdIntroReal>();
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith("@") && !(line.length() == 0)) {
+                    result.add(new ProdIntroReal(line));
+                }
+            }
+            if (isTrain) {
+                realTrain = result;
+                ProdIntroReal.resetMinMax(realTrain);
+            } else {
+                realTest = result;
+            }
+            br.close();
         }
     }
 
@@ -462,7 +547,22 @@ public class KNN {
             return 1 / Math.sqrt(dist);
         }
     }
-    
+    private double calculateIntroSim(ProdIntroReal p1, ProdIntroReal p2, double[] w) {
+        double dist = 0;
+        dist += p1.getType().compartTo(p2.getType()) * w[0];
+        dist += p1.getCustomer().compartTo(p2.getCustomer()) * w[1];
+        dist += Math.pow(p1.getNFee() - p2.getNFee(), 2) * w[2];
+        dist += Math.pow(p1.getNBudget() - p2.getNBudget(), 2) * w[3];
+        dist += p1.getSize().compartTo(p2.getSize()) * w[4];
+        dist += p1.getPromotion().compartTo(p2.getPromotion()) * w[5];
+        dist += Math.pow(p1.getNRate() - p2.getNRate(), 2) * w[6];
+        dist += Math.pow(p1.getNPeriod() - p2.getNPeriod(), 2) * w[7];
+        if (dist == 0) {
+            return Double.MAX_VALUE;
+        } else {
+            return 1 / Math.sqrt(dist);
+        }
+    }
     /**
      * calculate the similarity of ProdSelection p1 and p2, regarding to weight vetor w
      * 
@@ -515,7 +615,24 @@ public class KNN {
             }
         }
     }
+    private class SimforReal implements Comparable<SimforReal> {
+        double score;
+        double revenue;
 
+        public SimforReal(double s, double l) {
+            this.score = s;
+            this.revenue = l;
+        }
+
+        @Override
+        public int compareTo(SimforReal o) {
+            if (this.score == o.score) {
+                return Double.compare(this.revenue, o.revenue);
+            } else {
+                return -Double.compare(this.score, o.score);
+            }
+        }
+    }
     // testing method, using all default settings.
     public static void main(String[] args) {
 //        // default
