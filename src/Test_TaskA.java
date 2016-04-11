@@ -1,7 +1,7 @@
 /**
  * Created by liuyuan on 4/10/16.
  */
-public class Test {
+public class Test_TaskA {
     private static double[] w = {2.0, 0.0, 6.0, 172.0, 13.0, 109.0};
 
     //private static double[] w = {1,1,1,1,1,1,1,1};

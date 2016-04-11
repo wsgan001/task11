@@ -350,13 +350,12 @@ public class KNN {
                 List<ProdIntro> train = cloneIntroList(shuffled.subList(0, start));
                 train.addAll(cloneIntroList(shuffled.subList(end, size)));
                 double currErr = validate(introPredict(train, test, w));
-//                System.out.println(
-//                String.format("Round %d: %.2f%%", num++, currErr * 100));
+               System.out.println(
+                String.format("Round %d: %.2f%%", num++, currErr * 100));
                 err += currErr;
                 start = end;
             }
-//            System.out.println(String.format("\nResult: %.2f%%", err/fold *
-//            100));
+            System.out.println(String.format("\nResult: %.2f%%", err/fold * 100));
         }
         if (LABLENUM == 5) {
             int size = selectionTrain.size();
@@ -374,13 +373,11 @@ public class KNN {
                 List<ProdSelection> train = cloneSelectionList(shuffled.subList(0, start));
                 train.addAll(cloneSelectionList(shuffled.subList(end, size)));
                 double currErr = validate(selectionPredict(train, test, w));
-//                System.out.println(
-//                String.format("Round %d: %.2f%%", num++, currErr * 100));
+                System.out.println(String.format("Round %d: %.2f%%", num++, currErr * 100));
                 err += currErr;
                 start = end;
             }
-//            System.out.println(String.format("\nResult: %.2f%%", err/fold *
-//            100));
+            System.out.println(String.format("\nResult: %.2f%%", err/fold * 100));
         }
         return err / fold;
     }

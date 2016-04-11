@@ -3,7 +3,7 @@ import java.util.*;
 /**
  * Created by liuyuan on 4/3/16.
  */
-public class WVector {
+public class TrainWeight_TaskA {
     private static double[] w = {1, 1, 1, 1, 1, 1};
     private static final int DROP = 100;
 

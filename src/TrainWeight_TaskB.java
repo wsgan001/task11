@@ -6,9 +6,9 @@ import java.util.*;
 /**
  * Created by liuyuan on 4/3/16.
  */
-public class WVector_2 {
+public class TrainWeight_TaskB {
     //2.0, 4.0, 3.0, 43.0, 1.0, 1.0, 2.0, 32.0
-    private static double[] w = {10.0, 9.0, 0.0, 164.0, 1.0, 1.0, 23.0, 34.0};
+    private static double[] w = {1, 1, 1, 1, 1, 1, 1, 1};
     private static final int DROP = 100;
 
     public static void main(String[] args) {
