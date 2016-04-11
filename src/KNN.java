@@ -28,7 +28,7 @@ public class KNN {
     private static int k = 3;
     private static final double[] SelectionDEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1};
     private static final double[] IntroDEFAULTWEIGHT = { 1, 1, 1, 1, 1, 1, 1, 1 };
-    private static final double[] realDEFAULTWEIGHT = {10.0, 9.0, 0.0, 164.0, 1.0, 1.0, 23.0, 34.0};;
+    private static final double[] realDEFAULTWEIGHT = {1, 1, 1, 1, 1, 1, 1, 1};
     
     ///////////////////////////////////////////////////////
     ////////////////// CONSTRUCTORS/////////////////////////
@@ -337,8 +337,7 @@ public class KNN {
             int size = introTrain.size();
             if (fold > size)
                 fold = size;
-            List<ProdIntro> shuffled = cloneIntroList(introTrain);
-            Collections.shuffle(shuffled);
+            List<ProdIntro> shuffled = introShuffled;
             int testSize = size / fold;
             int mod = size % fold;
             int cnt = 0;
@@ -363,8 +362,7 @@ public class KNN {
             int size = selectionTrain.size();
             if (fold > size)
                 fold = size;
-            List<ProdSelection> shuffled = cloneSelectionList(selectionTrain);
-            Collections.shuffle(shuffled);
+            List<ProdSelection> shuffled = selectionShuffled;
             int testSize = size / fold;
             int mod = size % fold;
             int cnt = 0;
